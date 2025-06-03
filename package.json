@@ -1,0 +1,26 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "[![Actions Status](https://github.com/SaXaReD/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/SaXaReD/frontend-project-12/actions)",
+  "homepage": "https://github.com/SaXaReD/frontend-project-12#readme",
+  "bugs": {
+    "url": "https://github.com/SaXaReD/frontend-project-12/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaXaReD/frontend-project-12.git"
+  },
+  "license": "ISC",
+  "author": "Andrew Sakharov",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build --prefix frontend",
+    "start": "start-server -s ./frontend/dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cd frontend && npm ci"
+  },
+  "dependencies": {
+    "@hexlet/chat-server": "^2.0.4"
+  }
+}
