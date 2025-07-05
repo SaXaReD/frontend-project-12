@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { Button, Form, Card, Toast, ToastContainer } from 'react-bootstrap';
 import axios from 'axios';
-import { setUserData } from '../../store/authSlice';
+import { setUserData } from '../store/authSlice';
 
 const LoginForm = () => {
   const inputRef = useRef();
@@ -23,21 +23,21 @@ const LoginForm = () => {
       password: '',
     },
     onSubmit: async (values) => {
-      setAuthError(false)
-      try {
-        const { data: user } = await axios.post('/api/v1/login', values);
-        localStorage.setItem('username', user.username);
-        localStorage.setItem('token', user.token);
-        dispach(setUserData(user));
+      setAuthError(false);
+      axios.post('/api/v1/login', values).then((response) => {
+        const { username, token } = response.data;
+        localStorage.setItem('username', username);
+        localStorage.setItem('token', token);
+        dispach(setUserData(response.data));
         redir('/');
-      } catch (error) {
+      }).catch((error) => {
         if (error.response?.status === 401) {
           redir('/login');
           setAuthError(true);
         } else if (error.response?.status === 500) {
-          console.log(error, 'Нет соединения с сервером');
+          console.log(error, 'Ошибка соединения');
         }
-      }
+      })
     }
   })
 
@@ -47,7 +47,7 @@ const LoginForm = () => {
         <Card.Body>
           <Form onSubmit={formik.handleSubmit}>
             <h1>Войти</h1>
-            <Form.Group>
+            <Form.Floating className='mb-3'>
               <Form.Control
                 onChange={formik.handleChange}
                 value={formik.values.username}
@@ -59,8 +59,8 @@ const LoginForm = () => {
                 ref={inputRef}
               />
               <Form.Label htmlFor="username">Ваш ник</Form.Label>
-            </Form.Group>
-            <Form.Group>
+            </Form.Floating>
+            <Form.Floating className='mb-4'>
               <Form.Control
                 type="password"
                 onChange={formik.handleChange}
@@ -72,23 +72,12 @@ const LoginForm = () => {
                 required
               />
               <Form.Label htmlFor="password">Пароль</Form.Label>
-            </Form.Group>
-            {/* {authError && <div className="error-message">Неправильный логин или пароль</div>} */}
-            <Button type="submit" variant="outline-primary">Войти</Button>
+            </Form.Floating>
+            {authError && <div className="error-message">Неправильный логин или пароль</div>}
+            <Button type="submit" variant="outline-primary w-100">Войти</Button>
           </Form>
         </Card.Body>
       </Card>
-      {authError && <ToastContainer
-        className="p-3"
-        position={'top-center'}
-        style={{ zIndex: 1 }}
-      >
-        <Toast key={'danger'} bg={'danger'} onClose={() => setAuthError(false)} show={authError} delay={3000} autohide>
-          <Toast.Body>
-            Неправильный логин или пароль
-          </Toast.Body>
-        </Toast>
-      </ToastContainer>}
     </div>
   )
 }
