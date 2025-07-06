@@ -1,14 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { clearUserData } from "../store/authSlice";
+import { clearUserData, selectToken } from "../store/authSlice";
 import { Navbar, Container, Button } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
-  const token = localStorage.getItem("token");
+  const dispatch = useDispatch();
+  const token = useSelector(selectToken);
   const redir = useNavigate();
   const link = token ? "/" : "/login";
   const logout = () => {
     localStorage.clear();
-    clearUserData();
+    dispatch(clearUserData());
     redir("/login");
   };
 

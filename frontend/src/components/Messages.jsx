@@ -1,27 +1,33 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setInitialMessages,
   getMessagesForChannel,
   getMessageCountForChannel,
+  addOneMessage,
 } from '../store/messageSlice.js';
 import { selectors as channelSelectors } from '../store/channelSlice.js';
+import { selectToken, selectUsername } from '../store/authSlice';
+import socket from '../socket.js';
 import {
   Container,
   Col,
   Form,
   Button,
   Image,
-  InputGroup
+  InputGroup,
+  Spinner
 } from 'react-bootstrap';
 
 import axios from 'axios';
 
-const Messages = ({ token }) => {
+const Messages = () => {
   const redir = useNavigate();
   const dispatch = useDispatch();
   const messagesBoxRef = useRef(null);
+  const [messageText, setMessageText] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const currentChannelId = useSelector((state) => state.channels.currentChannel.id);
   const allChannels = useSelector(channelSelectors.selectAll);
@@ -35,8 +41,11 @@ const Messages = ({ token }) => {
     getMessageCountForChannel(state, currentChannelId)
   );
 
+  const username = useSelector(selectUsername);
+  const token = useSelector(selectToken);
+
   useEffect(() => {
-    if (messagesForCurrentChannel.length > 0 && messagesBoxRef.current) {
+    if (messagesBoxRef.current) {
       messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
     }
   }, [messagesForCurrentChannel]);
@@ -46,7 +55,7 @@ const Messages = ({ token }) => {
       redir('/login');
       return;
     }
-
+    setIsLoading(true);
     axios.get('/api/v1/messages', {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -54,8 +63,10 @@ const Messages = ({ token }) => {
     })
       .then((response) => {
         dispatch(setInitialMessages(response.data));
+        setIsLoading(false);
       })
       .catch((error) => {
+        setIsLoading(false);
         if (error.response && error.response.status === 401) {
           redir('/login');
         } else if (error.response && error.response.status === 500) {
@@ -66,28 +77,80 @@ const Messages = ({ token }) => {
       });
   }, [token, dispatch, redir]);
 
+  const handleNewMessage = useCallback((payload) => {
+    dispatch(addOneMessage(payload));
+  }, [dispatch]);
+
+  useEffect(() => {
+    socket.on('newMessage', handleNewMessage);
+
+    return () => {
+      socket.off('newMessage', handleNewMessage);
+    };
+  }, [handleNewMessage]);
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+
+    const trimmedMessage = messageText.trim();
+    if (!trimmedMessage) {
+      return;
+    }
+
+    const newMessageData = {
+      body: trimmedMessage,
+      channelId: currentChannelId,
+      username: username,
+    };
+
+    axios.post('/api/v1/messages', newMessageData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(() => setMessageText(''))
+      .catch((error) => console.error('Ошибка при отправке сообщения:', error));
+  };
+
   return (
     <Col className='p-0 h-100 d-flex flex-column'>
-      <Container className="bg-light mb-4 p-3 shadow-sm small">
+      <Container className="bg-light p-3 shadow-sm small">
         <p className="m-0">
           <b># {currentChannel ? currentChannel.name : 'general'}</b>
         </p>
         <span className="text-muted">{messagesCount} сообщений</span>
       </Container>
-      <Container
-        className="mt-auto px-5 py-3"
-        ref={messagesBoxRef}
-      >
-        {messagesForCurrentChannel.map((message) => (
-          <div key={message.id} className="text-break mb-2">
-            <b>{message.username}</b>: {message.body}
-          </div>
-        ))}
-        <Form className='py-1 border rounded-2' >
+      {isLoading ? (
+        <Container className="d-flex justify-content-center align-items-center h-100">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Загрузка сообщений...</span>
+          </Spinner>
+        </Container>
+      ) : (
+        <Container
+          className="overflow-auto mt-auto px-5 py-3"
+          ref={messagesBoxRef}
+        >
+          {messagesForCurrentChannel.map((message) => (
+            <div key={message.id} className="text-break mb-2">
+              <b>{message.username}</b>: {message.body}
+            </div>
+          ))}
+        </Container>
+      )}
+      <Container className="bg-light p-3 border-top">
+        <Form onSubmit={handleSendMessage} className='py-1 border rounded-2'>
           <InputGroup hasValidation>
-            <Form.Control name='body' type="text" placeholder="Введите сообщение..." className='border-0 p-0 ps-2' />
-            <Button variant='none' type="button" className="btn-group-vertical" disabled>
-              <Image src='/images/svg/send.svg'/>
+            <Form.Control
+              name='body'
+              type="text"
+              placeholder="Введите сообщение..."
+              className='border-0 p-0 ps-2'
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+            />
+            <Button variant='none' type="submit" className="btn-group-vertical" disabled={!messageText.trim()}>
+              <Image src='/images/svg/send.svg' />
               <span className="visually-hidden">Отправить</span>
             </Button>
           </InputGroup>

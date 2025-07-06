@@ -1,7 +1,7 @@
 import { createSlice, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
 
 const messagesAdapter = createEntityAdapter({
-  selectId: (message) => message.id, // ID сообщения находится в поле 'id'
+  selectId: (message) => message.id,
 });
 
 const initialState = messagesAdapter.getInitialState();
