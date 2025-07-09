@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import CreateChannel from './modal/CreateChannel.jsx';
+import CreateChannel from './Modal/CreateChannel.jsx';
 import RenameChannel from './Modal/RenameChannel.jsx';
 import ConfirmDelete from './Modal/ConfirmDelete.jsx';
 
