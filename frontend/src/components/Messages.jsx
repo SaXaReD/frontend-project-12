@@ -26,6 +26,7 @@ const Messages = () => {
   const redir = useNavigate();
   const dispatch = useDispatch();
   const messagesBoxRef = useRef(null);
+  const messageFocusRef = useRef(null);
   const [messageText, setMessageText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -49,6 +50,12 @@ const Messages = () => {
       messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
     }
   }, [messagesForCurrentChannel]);
+
+  useEffect(() => {
+    if (messageFocusRef.current) {
+      messageFocusRef.current.focus();
+    }
+  }, [currentChannelId]);
 
   useEffect(() => {
     if (!token) {
@@ -114,7 +121,7 @@ const Messages = () => {
 
   return (
     <Col className='p-0 h-100 d-flex flex-column'>
-      <Container className="bg-light p-3 shadow-sm small">
+      <Container className="bg-light p-3 mb-4 shadow-sm small">
         <p className="m-0">
           <b># {currentChannel ? currentChannel.name : 'general'}</b>
         </p>
@@ -128,20 +135,21 @@ const Messages = () => {
         </Container>
       ) : (
         <Container
-          className="overflow-auto mt-auto px-5 py-3"
+          className="overflow-auto px-5"
           ref={messagesBoxRef}
         >
           {messagesForCurrentChannel.map((message) => (
-            <div key={message.id} className="text-break mb-2">
+            <Container key={message.id} className="text-break mb-2">
               <b>{message.username}</b>: {message.body}
-            </div>
+            </Container>
           ))}
         </Container>
       )}
-      <Container className="bg-light p-3 border-top">
+      <Container className="mt-auto px-5 py-3">
         <Form onSubmit={handleSendMessage} className='py-1 border rounded-2'>
           <InputGroup hasValidation>
             <Form.Control
+              ref={messageFocusRef}
               name='body'
               type="text"
               placeholder="Введите сообщение..."

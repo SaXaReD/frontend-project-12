@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
+import Modal from './components/Modal.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Modal />
       <div className="d-flex flex-column h-100">
         <Header />
         <Routes>
