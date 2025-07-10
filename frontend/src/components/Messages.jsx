@@ -58,10 +58,6 @@ const Messages = () => {
   }, [currentChannelId]);
 
   useEffect(() => {
-    if (!token) {
-      redir('/login');
-      return;
-    }
     setIsLoading(true);
     axios.get('/api/v1/messages', {
       headers: {

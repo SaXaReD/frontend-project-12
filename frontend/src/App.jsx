@@ -1,9 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import './App.css';
 import MainPage from './components/MainPage.jsx';
 import NotFound from './components/NotFound.jsx';
 import LoginForm from './components/LoginForm.jsx';
-// import Signup from './components/SignUp/SignUp.jsx';
+import SignUp from './components/SignUp.jsx';
 import Header from './components/Header.jsx';
 import { useEffect } from 'react';
 import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSlice.js';
@@ -43,7 +42,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginForm />} />
-          {/* <Route path='/signup' element={<SignUp />} /> */}
+          <Route path='/signup' element={<SignUp />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

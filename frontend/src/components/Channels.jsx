@@ -121,9 +121,9 @@ const Channels = () => {
           </Spinner>
         </Container>
       ) : (
-        <ListGroup className='d-flex flex-column mb-2 overflow-auto flex-nowrap h-100'>
+        <ListGroup className='d-flex flex-column mb-2 px-2 overflow-auto flex-nowrap h-100'>
           {channels.map((channel) => (
-            <ListGroup.Item key={channel.id} className='p-0' ref={(el) => {
+            <ListGroup.Item key={channel.id} className='p-0 border-0' ref={(el) => {
               if (el) {
                 lastChannelItemRef.current[channel.id] = el;
               } else {

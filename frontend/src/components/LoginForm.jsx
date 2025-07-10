@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { Button, Form, Card, Toast, ToastContainer } from 'react-bootstrap';
+import { Button, Form, Card, Toast, ToastContainer, Container } from 'react-bootstrap';
 import axios from 'axios';
 import { setUserData } from '../store/authSlice';
 
@@ -10,7 +10,7 @@ const LoginForm = () => {
   const inputRef = useRef();
   const [authError, setAuthError] = useState(false);
 
-  const dispach = useDispatch();
+  const dispatch = useDispatch();
   const redir = useNavigate();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const LoginForm = () => {
         const { username, token } = response.data;
         localStorage.setItem('username', username);
         localStorage.setItem('token', token);
-        dispach(setUserData(response.data));
+        dispatch(setUserData(response.data));
         redir('/');
       }).catch((error) => {
         if (error.response?.status === 401) {
@@ -42,11 +42,11 @@ const LoginForm = () => {
   })
 
   return (
-    <div className='container h-100 align-content-center'>
+    <Container className='h-100 align-content-center'>
       <Card className="bg-body-secondary text-center mx-auto" style={{ width: '20.75rem' }}>
         <Card.Body>
           <Form onSubmit={formik.handleSubmit}>
-            <h1>Войти</h1>
+            <h1 className='text-center mb-4'>Войти</h1>
             <Form.Floating className='mb-3'>
               <Form.Control
                 onChange={formik.handleChange}
@@ -77,8 +77,14 @@ const LoginForm = () => {
             <Button type="submit" variant="outline-primary w-100">Войти</Button>
           </Form>
         </Card.Body>
+        <Card.Footer className='p-4'>
+          <Container className="text-center">
+            <span>Нет аккаунта? </span>
+            <a href='/signup'>Зарегистрируйтесь</a>
+          </Container>
+        </Card.Footer>
       </Card>
-    </div>
+    </Container>
   )
 }
 
