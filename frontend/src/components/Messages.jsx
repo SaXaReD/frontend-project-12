@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setInitialMessages,
   getMessagesForChannel,
-  getMessageCountForChannel,
   addOneMessage,
 } from '../store/messageSlice.js';
 import { selectors as channelSelectors } from '../store/channelSlice.js';
@@ -19,12 +18,13 @@ import {
   InputGroup,
   Spinner
 } from 'react-bootstrap';
-
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const Messages = () => {
   const redir = useNavigate();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const messagesBoxRef = useRef(null);
   const messageFocusRef = useRef(null);
   const [messageText, setMessageText] = useState('');
@@ -34,13 +34,23 @@ const Messages = () => {
   const allChannels = useSelector(channelSelectors.selectAll);
   const currentChannel = allChannels.find((c) => c.id === currentChannelId);
 
-  const messagesForCurrentChannel = useSelector((state) =>
+  const currentMessages = useSelector((state) =>
     getMessagesForChannel(state, currentChannelId)
   );
 
-  const messagesCount = useSelector((state) =>
-    getMessageCountForChannel(state, currentChannelId)
-  );
+  const messagesCount = useMemo(() => {
+    const count = currentMessages.length;
+    const getEndOfMessage = (n) => {
+      const lastTwo = n % 100;
+      const lastOne = n % 10;
+
+      if (lastTwo >= 11 && lastTwo <= 14) return 'many_messages';
+      if (lastOne === 1) return 'one_message';
+      if (lastOne >= 2 && lastOne <= 4) return 'few_messages';
+      return 'many_messages';
+    };
+    return t(`messageCounter.${getEndOfMessage(count)}`, { count });
+  }, [currentMessages, t]);
 
   const username = useSelector(selectUsername);
   const token = useSelector(selectToken);
@@ -49,7 +59,7 @@ const Messages = () => {
     if (messagesBoxRef.current) {
       messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
     }
-  }, [messagesForCurrentChannel]);
+  }, [currentMessages]);
 
   useEffect(() => {
     if (messageFocusRef.current) {
@@ -73,12 +83,12 @@ const Messages = () => {
         if (error.response && error.response.status === 401) {
           redir('/login');
         } else if (error.response && error.response.status === 500) {
-          console.error('Нет соединения с сервером:', error);
+          console.error(t('error.network'), error);
         } else {
-          console.error('Произошла ошибка при загрузке сообщений:', error);
+          console.error(t('error.unknown'), error);
         }
       });
-  }, [token, dispatch, redir]);
+  }, [token, dispatch, redir, t]);
 
   const handleNewMessage = useCallback((payload) => {
     dispatch(addOneMessage(payload));
@@ -112,21 +122,25 @@ const Messages = () => {
       },
     })
       .then(() => setMessageText(''))
-      .catch((error) => console.error('Ошибка при отправке сообщения:', error));
+      .catch((error) => {
+        if (error.response.status === 500) {
+          console.error(t('error.network'));
+        }
+      });
   };
 
   return (
     <Col className='p-0 h-100 d-flex flex-column'>
       <Container className="bg-light p-3 mb-4 shadow-sm small">
         <p className="m-0">
-          <b># {currentChannel ? currentChannel.name : 'general'}</b>
+          <b># {currentChannel ? currentChannel.name : t('channelName')}</b>
         </p>
-        <span className="text-muted">{messagesCount} сообщений</span>
+        <span className="text-muted">{messagesCount}</span>
       </Container>
       {isLoading ? (
         <Container className="d-flex justify-content-center align-items-center h-100">
           <Spinner animation="border" role="status">
-            <span className="visually-hidden">Загрузка сообщений...</span>
+            <span className="visually-hidden">{t('messages.loading')}</span>
           </Spinner>
         </Container>
       ) : (
@@ -134,7 +148,7 @@ const Messages = () => {
           className="overflow-auto px-5"
           ref={messagesBoxRef}
         >
-          {messagesForCurrentChannel.map((message) => (
+          {currentMessages.map((message) => (
             <Container key={message.id} className="text-break mb-2">
               <b>{message.username}</b>: {message.body}
             </Container>
@@ -148,14 +162,14 @@ const Messages = () => {
               ref={messageFocusRef}
               name='body'
               type="text"
-              placeholder="Введите сообщение..."
+              placeholder={t('messages.placeholder')}
               className='border-0 p-0 ps-2'
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
             />
             <Button variant='none' type="submit" className="btn-group-vertical" disabled={!messageText.trim()}>
               <Image src='/images/svg/send.svg' />
-              <span className="visually-hidden">Отправить</span>
+              <span className="visually-hidden">{t('messages.send')}</span>
             </Button>
           </InputGroup>
         </Form>

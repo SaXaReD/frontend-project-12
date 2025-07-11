@@ -35,9 +35,5 @@ export const getMessagesForChannel = createSelector(
     return allMessages.filter((message) => message.channelId === activeChannelId);
   }
 );
-export const getMessageCountForChannel = createSelector(
-  [getMessagesForChannel],
-  (messagesForChannel) => messagesForChannel.length
-);
 
 export default messageSlice.reducer;

@@ -13,10 +13,12 @@ import { setClose } from '../../store/modalSlice.js';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const RenameChannel = () => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
+  const { t } = useTranslation();
 
   const channels = useSelector(channelSelectors.selectAll);
   const token = useSelector(selectToken);
@@ -30,10 +32,10 @@ const RenameChannel = () => {
     name: yup
       .string()
       .trim()
-      .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов')
-      .required('Обязательное поле')
-      .notOneOf(existingNames, 'Должно быть уникальным'), // Проверяем уникальность
+      .min(3, t('error.minLengthUsername'))
+      .max(20, t('error.maxLength'))
+      .required(t('error.requiredField'))
+      .notOneOf(existingNames, t('error.uniqueName')),
   });
 
   const formik = useFormik({
@@ -56,14 +58,14 @@ const RenameChannel = () => {
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           if (error.response.status === 500) {
-            console.error('Ошибка сети или сервера:', error);
+            console.error(t('error.network'), error);
           } else if (error.response.status === 409) {
-            formik.setErrors({ name: 'Такой канал уже существует' });
+            formik.setErrors({ name: t('error.channelAlreadyExists') });
           } else {
-            console.error('Произошла ошибка при переименовании канала:', error);
+            console.error(t('error.unknown'), error);
           }
         } else {
-          console.error('Неизвестная ошибка:', error);
+          console.error(t('error.unknown'), error);
         }
       } finally {
         setSubmitting(false);
@@ -86,7 +88,7 @@ const RenameChannel = () => {
   return (
     <Modal centered show={type === 'rename'} onHide={handleModalClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Переименовать канал</Modal.Title>
+        <Modal.Title>{t('modal.renameChannel.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Container>
@@ -98,16 +100,16 @@ const RenameChannel = () => {
                 value={formik.values.name}
                 name="name"
                 id="name"
-                aria-label="Имя канала"
+                aria-label={t('modal.renameChannel.body')}
                 type="text"
                 isInvalid={formik.touched.name && !!formik.errors.name}
               />
-              <Form.Label hidden htmlFor="name">Имя канала</Form.Label>
+              <Form.Label hidden htmlFor="name">{t('modal.renameChannel.body')}</Form.Label>
               <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
             </Form.Group>
             <Container className='d-flex justify-content-end p-0'>
               <Button type='button' variant="secondary" className='me-2' onClick={handleModalClose} disabled={formik.isSubmitting}>
-                Отменить
+                {t('modal.renameChannel.cancelBtn')}
               </Button>
               <Button type='submit' variant="primary" onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
                 {formik.isSubmitting && (
@@ -120,7 +122,7 @@ const RenameChannel = () => {
                     className="me-1"
                   />
                 )}
-                {formik.isSubmitting ? 'Переименование...' : 'Отправить'}
+                {formik.isSubmitting ? t('modal.renameChannel.loading') : t('modal.renameChannel.confirmBtn')}
               </Button>
             </Container>
           </Form>

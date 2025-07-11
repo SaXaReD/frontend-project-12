@@ -1,4 +1,4 @@
-import { Container, Row, Col, Tab } from 'react-bootstrap';
+import { Container, Row, Tab } from 'react-bootstrap';
 import Channels from './Channels';
 import Messages from './Messages';
 
@@ -16,4 +16,3 @@ const MainPage = () => {
 };
 
 export default MainPage;
-

@@ -22,12 +22,14 @@ import {
   ListGroup
 } from 'react-bootstrap';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import socket from '../socket.js';
 
 const Channels = () => {
   const dispatch = useDispatch();
   const redir = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   const channels = useSelector(channelSelectors.selectAll);
   const currentChannelId = useSelector((state) => state.channels.currentChannel.id);
@@ -57,12 +59,12 @@ const Channels = () => {
       if (error.response && error.response.status === 401) {
         redir('/login');
       } else if (error.response && error.response.status === 500) {
-        console.log(error, 'Нет соединения с сервером');
+        console.log(error, t('error.network'));
       } else {
-        console.log(error, 'Произошла ошибка при загрузке каналов');
+        console.log(error, t('error.unknown'));
       }
     });
-  }, [token, dispatch, redir]);
+  }, [token, dispatch, redir, t]);
 
   const handleNewChannel = useCallback((payload) => {
     dispatch(addChannel(payload));
@@ -109,7 +111,7 @@ const Channels = () => {
   return (
     <Col md={2} className='border-end px-0 bg-light flex-column h-100 d-flex'>
       <Container className='d-flex mt-1 justify-content-between mb-2 pe-2 p-4'>
-        <b>Каналы</b>
+        <b>{t('channels.title')}</b>
         <Button type="button" variant='none' className="p-0 btn-group-vertical" onClick={() => dispatch(setOpen({ type: 'create' }))}>
           <Image src='/images/svg/plus.svg' />
         </Button>
@@ -117,13 +119,13 @@ const Channels = () => {
       {isLoading ? (
         <Container className="d-flex justify-content-center align-items-center h-100" key={'loading-spinner'}>
           <Spinner animation="border" role="status">
-            <span className="visually-hidden">Загрузка каналов...</span>
+            <span className="visually-hidden">{t('channels.loading')}</span>
           </Spinner>
         </Container>
       ) : (
-        <ListGroup className='d-flex flex-column mb-2 px-2 overflow-auto flex-nowrap h-100'>
+        <ListGroup className='d-flex flex-column mb-2 overflow-auto flex-nowrap h-100'>
           {channels.map((channel) => (
-            <ListGroup.Item key={channel.id} className='p-0 border-0' ref={(el) => {
+            <ListGroup.Item key={channel.id} className='p-0' ref={(el) => {
               if (el) {
                 lastChannelItemRef.current[channel.id] = el;
               } else {

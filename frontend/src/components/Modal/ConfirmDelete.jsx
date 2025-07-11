@@ -9,9 +9,11 @@ import {
 import { selectToken } from '../../store/authSlice.js';
 import { setClose } from '../../store/modalSlice.js';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const ConfirmDelete = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const token = useSelector(selectToken);
@@ -29,11 +31,9 @@ const ConfirmDelete = () => {
 
     } catch (error) {
       if (axios.isAxiosError(error) && error.response && error.response.status === 500) {
-        console.error('Нет соединения с сервером:', error);
-        alert('Ошибка: Нет соединения с сервером.');
+        console.error(t('error.network'), error);
       } else {
-        console.error('Произошла ошибка при удалении канала:', error);
-        alert('Ошибка: Не удалось удалить канал.');
+        console.error(t('error.unknown'), error);
       }
     } finally {
       setIsDeleting(false);
@@ -47,13 +47,13 @@ const ConfirmDelete = () => {
   return (
     <Modal centered show={type === 'delete'} onHide={() => dispatch(setClose())}>
       <Modal.Header closeButton>
-        <Modal.Title>Удалить канал</Modal.Title>
+        <Modal.Title>{t('modal.removeChannel.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p className="lead">Вы уверены, что хотите удалить этот канал?</p>
+        <p className="lead">{t('modal.removeChannel.body')}</p>
         <Container className='d-flex justify-content-end'>
           <Button type='button' variant="secondary" className='me-2' onClick={handleModal} disabled={isDeleting}>
-            Отменить
+          {t('modal.removeChannel.cancelBtn')}
           </Button>
           <Button type='submit' variant="danger" onClick={handleDeleteConfirmed} disabled={isDeleting}>
             {isDeleting && (
@@ -66,7 +66,7 @@ const ConfirmDelete = () => {
                 className="me-1"
               />
             )}
-            {isDeleting ? 'Удаление...' : 'Удалить'}
+            {isDeleting ? t('modal.removeChannel.loading') : t('modal.removeChannel.confirmBtn')}
           </Button>
         </Container>
       </Modal.Body>

@@ -17,10 +17,12 @@ import { setClose } from '../../store/modalSlice.js';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const CreateChannel = () => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
+  const { t } = useTranslation();
 
   const channels = useSelector(channelSelectors.selectAll);
   const token = useSelector(selectToken);
@@ -30,10 +32,10 @@ const CreateChannel = () => {
     const validationSchema = yup.object().shape({
       name: yup
         .string()
-        .min(3, 'От 3 до 20 символов')
-        .max(20, 'От 3 до 20 символов')
-        .required('Обязательное поле')
-        .notOneOf(existingNames, 'Должно быть уникальным'),
+        .min(3, t('error.minLengthUsername'))
+        .max(20, t('error.maxLength'))
+        .required(t('error.requiredField'))
+        .notOneOf(existingNames, t('error.uniqueName')),
     });
 
   const formik = useFormik({
@@ -54,9 +56,9 @@ const CreateChannel = () => {
         formik.resetForm();
       } catch (error) {
         if (error.response && error.response.status === 500) {
-          console.log(error, 'Нет соединения с сервером');
+          console.log(error, t('error.network'));
         } else {
-          console.log(error, 'Произошла ошибка при загрузке каналов');
+          console.log(error, t('error.unknown'));
         }
       } finally {
         setSubmitting(false);
@@ -79,7 +81,7 @@ const CreateChannel = () => {
   return (
     <Modal centered show={type === 'create'} onHide={() => dispatch(setClose())}>
         <Modal.Header closeButton>
-          <Modal.Title>Добавить канал</Modal.Title>
+          <Modal.Title>{t('modal.createChannel.title')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container>
@@ -95,11 +97,11 @@ const CreateChannel = () => {
                 type="text"
                 isInvalid={formik.touched.name && formik.errors.name}
               />
-              <Form.Label hidden htmlFor="name">Имя канала</Form.Label>
+              <Form.Label hidden htmlFor="name">{t('modal.createChannel.body')}</Form.Label>
               <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
               <Container className='d-flex justify-content-end p-0'>
                 <Button type='button' variant="secondary" className='me-2' onClick={handleModal}>
-                  Отменить
+                {t('modal.createChannel.cancelBtn')}
                 </Button>
                 <Button type='submit' variant="primary" onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
                   {formik.isSubmitting && <Spinner
@@ -110,7 +112,7 @@ const CreateChannel = () => {
                     aria-hidden='true'
                   />
                   }
-                  {!formik.isSubmitting ? 'Отправить' : 'Загрузка...'}
+                  {!formik.isSubmitting ? t('modal.createChannel.confirmBtn') : t('modal.createChannel.loading')}
                 </Button>
               </Container>
             </Form>

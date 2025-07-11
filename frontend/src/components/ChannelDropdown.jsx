@@ -3,9 +3,11 @@ import { Dropdown, ButtonGroup, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { setOpen } from '../store/modalSlice.js';
 import { setCurrentChannel } from '../store/channelSlice.js';
+import { useTranslation } from 'react-i18next';
 
 const ChannelDropdown = forwardRef(({ channelId, channelName, isActive }, ref) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const handleRename = () => {
     dispatch(setOpen({ type: 'rename', channelId }));
@@ -37,8 +39,8 @@ const ChannelDropdown = forwardRef(({ channelId, channelName, isActive }, ref) =
       />
 
       <Dropdown.Menu className='position-fixed'>
-        <Dropdown.Item onClick={handleDelete}>Удалить</Dropdown.Item>
-        <Dropdown.Item onClick={handleRename}>Переименовать</Dropdown.Item>
+        <Dropdown.Item onClick={handleDelete}>{t('dropdown.remove')}</Dropdown.Item>
+        <Dropdown.Item onClick={handleRename}>{t('dropdown.rename')}</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
