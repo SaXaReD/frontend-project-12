@@ -8,6 +8,7 @@ import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { setUserData } from '../store/authSlice';
 import { toast } from 'react-toastify';
+import leoProfanity from 'leo-profanity';
 
 const SignUp = () => {
   const usernameRef = useRef();
@@ -46,9 +47,17 @@ const SignUp = () => {
     validateOnChange: true,
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
+
+      const filteredUsername = leoProfanity.clean(values.username);
+
+      if (filteredUsername !== values.username) {
+        formik.setFieldError('username', t('signup.error.profanity'));
+        return;
+      }
+
       try {
         const response = await axios.post('/api/v1/signup', {
-          username: values.username.trim(),
+          username: filteredUsername.trim(),
           password: values.password,
         });
 

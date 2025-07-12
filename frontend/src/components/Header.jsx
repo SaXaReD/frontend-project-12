@@ -18,7 +18,7 @@ const Header = () => {
   return (
     <Navbar className="py-3 bg-gradient shadow" bg="primary" data-bs-theme="dark">
       <Container className="d-flex align-items-center justify-content-between">
-        <Navbar.Brand href={'/'}>{t('header.title')}</Navbar.Brand>
+        <Button onClick={() => token ? redir("/") : redir("/login")} variant="link" className="fs-4 fw-bold font-monospace p-0 text-decoration-none link-body-emphasis">{t('header.title')}</Button>
         {token ? (
           <Button variant="light" type="button" onClick={logout}>
             {t('header.logout')}

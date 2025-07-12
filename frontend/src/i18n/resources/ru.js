@@ -28,6 +28,7 @@ export default {
     channels: {
       error: {
         alreadyExists: 'Канал с таким именем уже существует',
+        profanity: 'Недопустимое имя канала',
       },
       title: 'Каналы',
       addChannel: 'Имя канала',
@@ -37,6 +38,7 @@ export default {
     },
     signup: {
       error: {
+        profanity: 'Недопустимое имя пользователя',
         alreadyExists: 'Такой пользователь уже существует',
         dontMatch: 'Пароли должны совпадать',
       },
@@ -48,6 +50,9 @@ export default {
       loading: 'Регистрация...',
     },
     messages: {
+      error: {
+        profanity: 'Сообщение содержит нецензурную лексику',
+      },
       placeholder: 'Введите сообщение...',
       send: 'Отправить',
       loading: 'Загрузка сообщений...',
@@ -58,6 +63,7 @@ export default {
       minLengthPassword: 'Минимум 6 символов',
       maxLength: 'Максимум 20 символов',
       uniqueName: 'Должно быть уникальным',
+      profanity: 'Недопустимое название',
     },
     dropdown: {
       rename: 'Переименовать',

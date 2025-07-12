@@ -10,11 +10,13 @@ import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSl
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
 import Modal from './components/Modal.jsx';
+import leoProfanity from 'leo-profanity';
 
 function App() {
   const dispatch = useDispatch();
   const isAuthChecked = useSelector(selectIsAuthChecked);
   useEffect(() => {
+    leoProfanity.loadDictionary('ru');
     const storedToken = localStorage.getItem('token');
     const storedUsername = localStorage.getItem('username');
 

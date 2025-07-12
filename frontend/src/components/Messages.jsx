@@ -21,6 +21,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import leoProfanity from 'leo-profanity';
 
 const Messages = () => {
   const redir = useNavigate();
@@ -105,6 +106,13 @@ const Messages = () => {
 
     const trimmedMessage = messageText.trim();
     if (!trimmedMessage) {
+      return;
+    }
+
+    const filteredName = leoProfanity.clean(trimmedMessage);
+
+    if (filteredName !== trimmedMessage) {
+      toast.error(t('messages.error.profanity'));
       return;
     }
 

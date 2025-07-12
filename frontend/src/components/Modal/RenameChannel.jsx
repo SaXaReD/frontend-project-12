@@ -15,6 +15,7 @@ import { useFormik } from 'formik';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import leoProfanity from 'leo-profanity';
 
 const RenameChannel = () => {
   const dispatch = useDispatch();
@@ -48,7 +49,16 @@ const RenameChannel = () => {
     validationSchema,
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting }) => {
+      if (!token) return;
       setSubmitting(true);
+
+      const filteredName = leoProfanity.clean(values.name);
+
+      if (filteredName !== values.name) {
+        formik.setFieldError('name', t('channels.error.profanity'));
+        return;
+      }
+
       try {
         await axios.patch(`/api/v1/channels/${ChannelId}`, { name: values.name.trim() }, {
           headers: {

@@ -19,6 +19,7 @@ import { useFormik } from 'formik';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import leoProfanity from 'leo-profanity';
 
 const CreateChannel = () => {
   const dispatch = useDispatch();
@@ -48,8 +49,18 @@ const CreateChannel = () => {
     validationSchema,
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting }) => {
+      if (!token) return;
+      setSubmitting(true);
+
+      const filteredName = leoProfanity.clean(values.name);
+
+      if (filteredName !== values.name) {
+        formik.setFieldError('name', t('channels.error.profanity'));
+        return;
+      }
+
       try {
-        const response = await axios.post('/api/v1/channels', values, {
+        const response = await axios.post('/api/v1/channels', { name: filteredName }, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
