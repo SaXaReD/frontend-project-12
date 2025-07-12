@@ -10,11 +10,14 @@ import { selectToken } from '../../store/authSlice.js';
 import { setClose } from '../../store/modalSlice.js';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 const ConfirmDelete = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [isDeleting, setIsDeleting] = useState(false);
+  const notifySuccess = () => toast.success(t('toast.success.channelRemoved'));
+  const notifyError = () => toast.error(t('toast.error.network'));
 
   const token = useSelector(selectToken);
   const { type, ChannelId } = useSelector((state) => state.modal);
@@ -28,13 +31,9 @@ const ConfirmDelete = () => {
         },
       });
       dispatch(setClose());
-
+      notifySuccess();
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response && error.response.status === 500) {
-        console.error(t('error.network'), error);
-      } else {
-        console.error(t('error.unknown'), error);
-      }
+      notifyError();
     } finally {
       setIsDeleting(false);
     }

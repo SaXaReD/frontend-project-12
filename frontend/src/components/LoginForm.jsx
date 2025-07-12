@@ -7,10 +7,12 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { setUserData } from '../store/authSlice';
 import { useTranslation } from "react-i18next";
+import { toast } from 'react-toastify';
 
 const LoginForm = () => {
   const inputRef = useRef();
   const { t } = useTranslation();
+  const notifyError = () => toast.error(t('toast.error.network'));
 
   const dispatch = useDispatch();
   const redir = useNavigate();
@@ -32,7 +34,7 @@ const LoginForm = () => {
     validationSchema,
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting, setFieldError }) => {
-      if (formik.errors.username === t('error.login')) {
+      if (formik.errors.username === t('login.error.invalidCredentials')) {
         formik.setFieldError('username', '');
         formik.setFieldError('password', '');
       }
@@ -49,11 +51,11 @@ const LoginForm = () => {
         }
       } catch (error) {
         if (error.response?.status === 401) {
-          setFieldError('username', t('error.login'));
-          setFieldError('password', t('error.login'));
+          setFieldError('username', t('login.error.invalidCredentials'));
+          setFieldError('password', t('login.error.invalidCredentials'));
           setSubmitting(false);
-        } else if (error.response?.status === 500) {
-          console.log(error, 'error.network');
+        } else {
+          notifyError();
         }
       } finally {
         setSubmitting(false);
@@ -78,7 +80,7 @@ const LoginForm = () => {
                 ref={inputRef}
                 isInvalid={!!formik.errors.username}
               />
-              {formik.errors.username && formik.errors.username !== t('error.login') && (
+              {formik.errors.username && formik.errors.username !== t('login.error.invalidCredentials') && (
                 <Form.Control.Feedback type="invalid" tooltip>
                   {formik.errors.username}
                 </Form.Control.Feedback>

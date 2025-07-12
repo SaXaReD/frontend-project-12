@@ -56,12 +56,8 @@ const Channels = () => {
       setIsLoading(false);
     }).catch((error) => {
       setIsLoading(false);
-      if (error.response && error.response.status === 401) {
+      if (error.response?.status === 401) {
         redir('/login');
-      } else if (error.response && error.response.status === 500) {
-        console.log(error, t('error.network'));
-      } else {
-        console.log(error, t('error.unknown'));
       }
     });
   }, [token, dispatch, redir, t]);

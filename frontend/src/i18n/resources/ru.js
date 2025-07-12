@@ -1,5 +1,3 @@
-import { Dropdown } from "react-bootstrap";
-
 export default {
   translation: {
     messageCounter: {
@@ -8,6 +6,9 @@ export default {
       many_messages: '{{ count }} сообщений',
     },
     login: {
+      error: {
+        invalidCredentials: 'Неверные имя пользователя или пароль',
+      },
       enter: 'Войти',
       enterLoading: 'Вход в систему',
       noAccount: 'Нет аккаунта?',
@@ -25,6 +26,9 @@ export default {
       logout: 'Выйти',
     },
     channels: {
+      error: {
+        alreadyExists: 'Канал с таким именем уже существует',
+      },
       title: 'Каналы',
       addChannel: 'Имя канала',
       remove: 'Удалить канал',
@@ -32,12 +36,16 @@ export default {
       loading: 'Загрузка каналов...',
     },
     signup: {
+      error: {
+        alreadyExists: 'Такой пользователь уже существует',
+        dontMatch: 'Пароли должны совпадать',
+      },
       title: 'Регистрация',
       username: 'Ваш ник',
       password: 'Пароль',
       confirmPassword: 'Подтвердите пароль',
       registrationBtn: 'Зарегистрироваться',
-      registrationLoading: 'Регистрация...',
+      loading: 'Регистрация...',
     },
     messages: {
       placeholder: 'Введите сообщение...',
@@ -45,18 +53,11 @@ export default {
       loading: 'Загрузка сообщений...',
     },
     error: {
-      network: 'Ошибка сети, попробуйте позже',
       requiredField: 'Обязательное поле',
-      login: 'Неверные имя пользователя или пароль',
-      minLength: 'Минимум 6 символов',
+      minLengthName: 'Минимум 3 символа',
+      minLengthPassword: 'Минимум 6 символов',
       maxLength: 'Максимум 20 символов',
-      minLengthUsername: 'минимум 3 символа',
-      passwordsDontMatch: 'Пароли должны совпадать',
-      usernameAlreadyExists: 'Такой пользователь уже существует',
       uniqueName: 'Должно быть уникальным',
-      unknown: 'Неизвестная ошибка',
-      channelAlreadyExists: 'Канал с таким именем уже существует',
-
     },
     dropdown: {
       rename: 'Переименовать',
@@ -84,6 +85,16 @@ export default {
         loading: 'Загрузка...',
         cancelBtn: 'Отмена',
       },
-    }
+    },
+    toast: {
+      error: {
+        network: 'Произошла ошибка, повторите попытку позже',
+      },
+      success: {
+        channelCreated: 'Канал создан',
+        channelRemoved: 'Канал удален',
+        channelRenamed: 'Канал переименован',
+      },
+    },
   },
 };

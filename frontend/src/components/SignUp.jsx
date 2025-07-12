@@ -7,12 +7,14 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { setUserData } from '../store/authSlice';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
   const usernameRef = useRef();
   const redir = useNavigate();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const notifyError = () => toast.error(t('toast.error.network'));
 
   useEffect(() => {
     usernameRef.current.focus()
@@ -21,16 +23,16 @@ const SignUp = () => {
   const validationSchema = yup.object().shape({
     username: yup
       .string()
-      .min(3, t('error.minLengthUsername'))
+      .min(3, t('error.minLengthName'))
       .max(20, t('error.maxLength'))
       .required(t('error.requiredField')),
     password: yup
       .string()
-      .min(6, t('error.minLength'))
+      .min(6, t('error.minLengthPassword'))
       .required(t('error.requiredField')),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref('password'), null], t('error.passwordsDontMatch'))
+      .oneOf([yup.ref('password'), null], t('signup.error.dontMatch'))
       .required(t('error.requiredField')),
   });
 
@@ -55,17 +57,11 @@ const SignUp = () => {
           redir('/');
         }
       } catch (error) {
-        if (error.response) {
-          if (error.response?.status === 409) {
-            formik.setFieldError('username', t('error.usernameAlreadyExists'));
-            usernameRef.current.select();
-          } else if (error.response.status === 500) {
-            console.error(t('error.network'), error);
-          } else {
-            console.error('Произошла ошибка при регистрации:', error);
-          }
+        if (error.response?.status === 409) {
+          formik.setFieldError('username', t('signup.error.alreadyExists'));
+          usernameRef.current.select();
         } else {
-          console.error(t('error.unknow'), error);
+          notifyError();
         }
       } finally {
         setSubmitting(false);
@@ -142,7 +138,7 @@ const SignUp = () => {
                     aria-hidden="true"
                     className="me-1"
                   />
-                  {t('signup.registrationLoading')}
+                  {t('signup.loading')}
                 </>
               ) : (
                 t('signup.registrationBtn')

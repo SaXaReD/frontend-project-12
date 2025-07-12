@@ -5,6 +5,7 @@ import LoginForm from './components/LoginForm.jsx';
 import SignUp from './components/SignUp.jsx';
 import Header from './components/Header.jsx';
 import { useEffect } from 'react';
+import { ToastContainer } from "react-toastify";
 import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
@@ -37,6 +38,7 @@ function App() {
   return (
     <BrowserRouter>
       <Modal />
+      <ToastContainer />
       <div className="d-flex flex-column h-100">
         <Header />
         <Routes>

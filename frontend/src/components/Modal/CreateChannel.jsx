@@ -18,11 +18,14 @@ import * as yup from 'yup';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 const CreateChannel = () => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const { t } = useTranslation();
+  const notifySuccess = () => toast.success(t('toast.success.channelCreated'));
+  const notifyError = () => toast.error(t('toast.error.network'));
 
   const channels = useSelector(channelSelectors.selectAll);
   const token = useSelector(selectToken);
@@ -54,12 +57,9 @@ const CreateChannel = () => {
         dispatch(addChannel(response.data));
         dispatch(setCurrentChannel(response.data.id));
         formik.resetForm();
+        notifySuccess();
       } catch (error) {
-        if (error.response && error.response.status === 500) {
-          console.log(error, t('error.network'));
-        } else {
-          console.log(error, t('error.unknown'));
-        }
+        notifyError();
       } finally {
         setSubmitting(false);
         dispatch(setClose());

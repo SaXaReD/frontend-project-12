@@ -14,11 +14,14 @@ import * as yup from 'yup';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 const RenameChannel = () => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const { t } = useTranslation();
+  const notifySuccess = () => toast.success(t('toast.success.channelRenamed'));
+  const notifyError = () => toast.error(t('toast.error.network'));
 
   const channels = useSelector(channelSelectors.selectAll);
   const token = useSelector(selectToken);
@@ -54,19 +57,9 @@ const RenameChannel = () => {
         });
         formik.resetForm();
         dispatch(setClose());
-
+        notifySuccess();
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          if (error.response.status === 500) {
-            console.error(t('error.network'), error);
-          } else if (error.response.status === 409) {
-            formik.setErrors({ name: t('error.channelAlreadyExists') });
-          } else {
-            console.error(t('error.unknown'), error);
-          }
-        } else {
-          console.error(t('error.unknown'), error);
-        }
+        notifyError();
       } finally {
         setSubmitting(false);
       }

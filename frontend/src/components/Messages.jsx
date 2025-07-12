@@ -20,6 +20,7 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Messages = () => {
   const redir = useNavigate();
@@ -29,6 +30,7 @@ const Messages = () => {
   const messageFocusRef = useRef(null);
   const [messageText, setMessageText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const notifyError = () => toast.error(t('toast.error.network'));
 
   const currentChannelId = useSelector((state) => state.channels.currentChannel.id);
   const allChannels = useSelector(channelSelectors.selectAll);
@@ -80,12 +82,8 @@ const Messages = () => {
       })
       .catch((error) => {
         setIsLoading(false);
-        if (error.response && error.response.status === 401) {
+        if (error.response.status === 401) {
           redir('/login');
-        } else if (error.response && error.response.status === 500) {
-          console.error(t('error.network'), error);
-        } else {
-          console.error(t('error.unknown'), error);
         }
       });
   }, [token, dispatch, redir, t]);
@@ -122,10 +120,8 @@ const Messages = () => {
       },
     })
       .then(() => setMessageText(''))
-      .catch((error) => {
-        if (error.response.status === 500) {
-          console.error(t('error.network'));
-        }
+      .catch(() => {
+        notifyError();
       });
   };
 
