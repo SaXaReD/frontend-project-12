@@ -70,6 +70,7 @@ const CreateChannel = () => {
         formik.resetForm();
         notifySuccess();
       } catch (error) {
+        console.error('Error creating channel:', error);
         notifyError();
       } finally {
         setSubmitting(false);

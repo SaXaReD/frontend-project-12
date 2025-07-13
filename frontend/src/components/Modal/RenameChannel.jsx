@@ -69,6 +69,7 @@ const RenameChannel = () => {
         dispatch(setClose());
         notifySuccess();
       } catch (error) {
+        console.error('Error renaming channel:', error);
         notifyError();
       } finally {
         setSubmitting(false);

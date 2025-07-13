@@ -110,6 +110,7 @@ const Channels = () => {
         <b>{t('channels.title')}</b>
         <Button type="button" variant='none' className="p-0 btn-group-vertical" onClick={() => dispatch(setOpen({ type: 'create' }))}>
           <Image src='/images/svg/plus.svg' />
+          <span className='visually-hidden'>+</span>
         </Button>
       </Container>
       {isLoading ? (

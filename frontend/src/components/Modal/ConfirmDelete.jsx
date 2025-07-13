@@ -33,6 +33,7 @@ const ConfirmDelete = () => {
       dispatch(setClose());
       notifySuccess();
     } catch (error) {
+      console.error('Error deleting channel:', error);
       notifyError();
     } finally {
       setIsDeleting(false);

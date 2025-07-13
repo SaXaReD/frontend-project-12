@@ -25,7 +25,7 @@ const SignUp = () => {
     username: yup
       .string()
       .min(3, t('error.minLengthName'))
-      .max(20, t('error.maxLength'))
+      .max(20, t('error.minLengthName'))
       .required(t('error.requiredField')),
     password: yup
       .string()

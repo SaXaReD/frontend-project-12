@@ -36,7 +36,7 @@ const ChannelDropdown = forwardRef(({ channelId, channelName, isActive }, ref) =
         variant={isActive ? 'secondary' : 'light'}
         id={`dropdown-split-channel-${channelId}`}
         className={`flex-grow-0 rounded-0 ${isActive ? 'text-white' : 'text-dark'}`}
-      />
+      ><span class="visually-hidden">Управление каналом</span></Dropdown.Toggle>
 
       <Dropdown.Menu className='position-fixed'>
         <Dropdown.Item onClick={handleDelete}>{t('dropdown.remove')}</Dropdown.Item>

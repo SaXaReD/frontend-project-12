@@ -43,7 +43,7 @@ export default {
         dontMatch: 'Пароли должны совпадать',
       },
       title: 'Регистрация',
-      username: 'Ваш ник',
+      username: 'Имя пользователя',
       password: 'Пароль',
       confirmPassword: 'Подтвердите пароль',
       registrationBtn: 'Зарегистрироваться',
@@ -59,9 +59,8 @@ export default {
     },
     error: {
       requiredField: 'Обязательное поле',
-      minLengthName: 'Минимум 3 символа',
-      minLengthPassword: 'Минимум 6 символов',
-      maxLength: 'Максимум 20 символов',
+      minLengthName: 'От 3 до 20 символов',
+      minLengthPassword: 'Не менее 6 символов',
       uniqueName: 'Должно быть уникальным',
       profanity: 'Недопустимое название',
     },
@@ -94,11 +93,11 @@ export default {
     },
     toast: {
       error: {
-        network: 'Произошла ошибка, повторите попытку позже',
+        network: 'Ошибка соединения',
       },
       success: {
         channelCreated: 'Канал создан',
-        channelRemoved: 'Канал удален',
+        channelRemoved: 'Канал удалён',
         channelRenamed: 'Канал переименован',
       },
     },
