@@ -16,7 +16,7 @@ function App() {
   const dispatch = useDispatch();
   const isAuthChecked = useSelector(selectIsAuthChecked);
   useEffect(() => {
-    leoProfanity.loadDictionary('ru');
+    leoProfanity.loadDictionary('en');
     const storedToken = localStorage.getItem('token');
     const storedUsername = localStorage.getItem('username');
 

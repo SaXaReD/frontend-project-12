@@ -55,10 +55,10 @@ const RenameChannel = () => {
 
       const filteredName = leoProfanity.clean(values.name);
 
-      if (filteredName !== values.name) {
-        formik.setFieldError('name', t('channels.error.profanity'));
-        return;
-      }
+      // if (filteredName !== values.name) {
+      //   formik.setFieldError('name', t('channels.error.profanity'));
+      //   return;
+      // }
 
       try {
         await axios.patch(API_ROUTES.channels.channelById(ChannelId), { name: filteredName }, {
