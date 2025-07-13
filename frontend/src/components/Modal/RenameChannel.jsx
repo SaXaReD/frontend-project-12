@@ -61,7 +61,7 @@ const RenameChannel = () => {
       }
 
       try {
-        await axios.patch(API_ROUTES.channels.channelById(ChannelId), { name: values.name.trim() }, {
+        await axios.patch(API_ROUTES.channels.channelById(ChannelId), { name: filteredName }, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

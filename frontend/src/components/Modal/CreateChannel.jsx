@@ -55,10 +55,10 @@ const CreateChannel = () => {
 
       const filteredName = leoProfanity.clean(values.name);
 
-      if (filteredName !== values.name) {
-        formik.setFieldError('name', t('channels.error.profanity'));
-        return;
-      }
+      // if (filteredName !== values.name) {
+      //   formik.setFieldError('name', t('channels.error.profanity'));
+      //   return;
+      // }
 
       try {
         const response = await axios.post(API_ROUTES.channels.list(), { name: filteredName }, {

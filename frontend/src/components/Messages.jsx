@@ -112,13 +112,13 @@ const Messages = () => {
 
     const filteredName = leoProfanity.clean(trimmedMessage);
 
-    if (filteredName !== trimmedMessage) {
-      toast.error(t('messages.error.profanity'));
-      return;
-    }
+    // if (filteredName !== trimmedMessage) {
+    //   toast.error(t('messages.error.profanity'));
+    //   return;
+    // }
 
     const newMessageData = {
-      body: trimmedMessage,
+      body: filteredName,
       channelId: currentChannelId,
       username: username,
     };
