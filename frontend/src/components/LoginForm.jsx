@@ -1,37 +1,37 @@
-import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
-import { useFormik } from 'formik';
+import { useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
+import { useNavigate, Link } from 'react-router-dom'
+import { useFormik } from 'formik'
 import {
   Button,
   Form,
   Card,
   Container,
   Spinner,
-} from 'react-bootstrap';
-import axios from 'axios';
-import * as yup from 'yup';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
-import { setUserData } from '../store/authSlice';
-import API_ROUTES from '../routes/routes';
+} from 'react-bootstrap'
+import axios from 'axios'
+import * as yup from 'yup'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { setUserData } from '../store/authSlice'
+import API_ROUTES from '../routes/routes'
 
 const LoginForm = () => {
-  const inputRef = useRef();
-  const { t } = useTranslation();
-  const notifyError = () => toast.error(t('toast.error.network'));
+  const inputRef = useRef()
+  const { t } = useTranslation()
+  const notifyError = () => toast.error(t('toast.error.network'))
 
-  const dispatch = useDispatch();
-  const redir = useNavigate();
+  const dispatch = useDispatch()
+  const redir = useNavigate()
 
   useEffect(() => {
-    inputRef.current.focus();
-  }, []);
+    inputRef.current.focus()
+  }, [])
 
   const validationSchema = yup.object().shape({
     username: yup.string().required(t('error.requiredField')),
     password: yup.string().required(t('error.requiredField')),
-  });
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -42,33 +42,33 @@ const LoginForm = () => {
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting, setFieldError }) => {
       if (formik.errors.username === t('login.error.invalidCredentials')) {
-        formik.setFieldError('username', '');
-        formik.setFieldError('password', '');
+        formik.setFieldError('username', '')
+        formik.setFieldError('password', '')
       }
       try {
-        setSubmitting(true);
-        const response = await axios.post(API_ROUTES.login(), values);
+        setSubmitting(true)
+        const response = await axios.post(API_ROUTES.login(), values)
 
         if (response.status === 200) {
-          const { username, token } = response.data;
-          localStorage.setItem('username', username);
-          localStorage.setItem('token', token);
-          dispatch(setUserData(response.data));
-          redir('/');
+          const { username, token } = response.data
+          localStorage.setItem('username', username)
+          localStorage.setItem('token', token)
+          dispatch(setUserData(response.data))
+          redir('/')
         }
       } catch (error) {
         if (error.response?.status === 401) {
-          setFieldError('username', t('login.error.invalidCredentials'));
-          setFieldError('password', t('login.error.invalidCredentials'));
-          setSubmitting(false);
+          setFieldError('username', t('login.error.invalidCredentials'))
+          setFieldError('password', t('login.error.invalidCredentials'))
+          setSubmitting(false)
         } else {
-          notifyError();
+          notifyError()
         }
       } finally {
-        setSubmitting(false);
+        setSubmitting(false)
       }
     },
-  });
+  })
 
   return (
     <Container className="h-100 align-content-center">
@@ -137,7 +137,7 @@ const LoginForm = () => {
         </Card.Footer>
       </Card>
     </Container>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm

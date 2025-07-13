@@ -1,31 +1,31 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useEffect } from 'react';
-import { ToastContainer } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
-import { Spinner } from 'react-bootstrap';
-import leoProfanity from 'leo-profanity';
-import Modal from './components/Modal.jsx';
-import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSlice.js';
-import MainPage from './components/MainPage.jsx';
-import NotFound from './components/NotFound.jsx';
-import LoginForm from './components/LoginForm.jsx';
-import SignUp from './components/SignUp.jsx';
-import Header from './components/Header.jsx';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { ToastContainer } from 'react-toastify'
+import { useDispatch, useSelector } from 'react-redux'
+import { Spinner } from 'react-bootstrap'
+import leoProfanity from 'leo-profanity'
+import Modal from './components/Modal.jsx'
+import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSlice.js'
+import MainPage from './components/MainPage.jsx'
+import NotFound from './components/NotFound.jsx'
+import LoginForm from './components/LoginForm.jsx'
+import SignUp from './components/SignUp.jsx'
+import Header from './components/Header.jsx'
 
 const App = () => {
-  const dispatch = useDispatch();
-  const isAuthChecked = useSelector(selectIsAuthChecked);
+  const dispatch = useDispatch()
+  const isAuthChecked = useSelector(selectIsAuthChecked)
   useEffect(() => {
-    leoProfanity.loadDictionary('en');
-    const storedToken = localStorage.getItem('token');
-    const storedUsername = localStorage.getItem('username');
+    leoProfanity.loadDictionary('en')
+    const storedToken = localStorage.getItem('token')
+    const storedUsername = localStorage.getItem('username')
 
     if (storedToken && storedUsername) {
-      dispatch(setUserData({ token: storedToken, username: storedUsername }));
+      dispatch(setUserData({ token: storedToken, username: storedUsername }))
     } else {
-      dispatch(setAuthChecked());
+      dispatch(setAuthChecked())
     }
-  }, [dispatch]);
+  }, [dispatch])
 
   if (!isAuthChecked) {
     return (
@@ -34,7 +34,7 @@ const App = () => {
           <span className="visually-hidden">Загрузка приложения...</span>
         </Spinner>
       </div>
-    );
+    )
   }
 
   return (
@@ -51,7 +51,7 @@ const App = () => {
         </Routes>
       </div>
     </BrowserRouter>
-  );
-};
+  )
+}
 
-export default App;
+export default App

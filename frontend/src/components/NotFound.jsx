@@ -1,9 +1,9 @@
-import React from 'react';
-import { Card } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
+import React from 'react'
+import { Card } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 
 const NotFound = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <div className="container h-100 align-content-center">
       <Card className="bg-body-secondary text-center mx-auto" style={{ width: '20.75rem' }}>
@@ -18,7 +18,7 @@ const NotFound = () => {
         </Card.Body>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default NotFound;
+export default NotFound

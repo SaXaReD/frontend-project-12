@@ -1,37 +1,37 @@
-import { useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useRef, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Container,
   Button,
   Spinner,
   Modal,
   Form,
-} from 'react-bootstrap';
-import * as yup from 'yup';
-import { useFormik } from 'formik';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
-import leoProfanity from 'leo-profanity';
-import { selectors as channelSelectors } from '../../store/channelSlice.js';
-import { selectToken } from '../../store/authSlice.js';
-import { setClose } from '../../store/modalSlice.js';
-import API_ROUTES from '../../routes/routes.js';
+} from 'react-bootstrap'
+import * as yup from 'yup'
+import { useFormik } from 'formik'
+import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import leoProfanity from 'leo-profanity'
+import { selectors as channelSelectors } from '../../store/channelSlice.js'
+import { selectToken } from '../../store/authSlice.js'
+import { setClose } from '../../store/modalSlice.js'
+import API_ROUTES from '../../routes/routes.js'
 
 const RenameChannel = () => {
-  const dispatch = useDispatch();
-  const inputRef = useRef(null);
-  const { t } = useTranslation();
-  const notifySuccess = () => toast.success(t('toast.success.channelRenamed'));
-  const notifyError = () => toast.error(t('toast.error.network'));
+  const dispatch = useDispatch()
+  const inputRef = useRef(null)
+  const { t } = useTranslation()
+  const notifySuccess = () => toast.success(t('toast.success.channelRenamed'))
+  const notifyError = () => toast.error(t('toast.error.network'))
 
-  const channels = useSelector(channelSelectors.selectAll);
-  const token = useSelector(selectToken);
-  const { type, ChannelId } = useSelector((state) => state.modal);
+  const channels = useSelector(channelSelectors.selectAll)
+  const token = useSelector(selectToken)
+  const { type, ChannelId } = useSelector((state) => state.modal)
 
-  const channelToRename = channels.find((c) => c.id === ChannelId);
-  const existingNames = channels.map((c) => c.name);
-  const initialChannelName = channelToRename ? channelToRename.name : '';
+  const channelToRename = channels.find((c) => c.id === ChannelId)
+  const existingNames = channels.map((c) => c.name)
+  const initialChannelName = channelToRename ? channelToRename.name : ''
 
   const validationSchema = yup.object().shape({
     name: yup
@@ -41,7 +41,7 @@ const RenameChannel = () => {
       .max(20, t('error.maxLength'))
       .required(t('error.requiredField'))
       .notOneOf(existingNames, t('error.uniqueName')),
-  });
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -50,14 +50,14 @@ const RenameChannel = () => {
     validationSchema,
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting }) => {
-      if (!token) return;
-      setSubmitting(true);
+      if (!token) return
+      setSubmitting(true)
 
-      const filteredName = leoProfanity.clean(values.name);
+      const filteredName = leoProfanity.clean(values.name)
 
       // if (filteredName !== values.name) {
-      //   formik.setFieldError('name', t('channels.error.profanity'));
-      //   return;
+      //   formik.setFieldError('name', t('channels.error.profanity'))
+      //   return
       // }
 
       try {
@@ -65,30 +65,30 @@ const RenameChannel = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-        formik.resetForm();
-        dispatch(setClose());
-        notifySuccess();
+        })
+        formik.resetForm()
+        dispatch(setClose())
+        notifySuccess()
       } catch (error) {
-        console.error('Error renaming channel:', error);
-        notifyError();
+        console.error('Error renaming channel:', error)
+        notifyError()
       } finally {
-        setSubmitting(false);
+        setSubmitting(false)
       }
     },
-  });
+  })
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
+      inputRef.current.focus()
+      inputRef.current.select()
     }
-  }, []);
+  }, [])
 
   const handleModalClose = () => {
-    formik.resetForm();
-    dispatch(setClose());
-  };
+    formik.resetForm()
+    dispatch(setClose())
+  }
 
   return (
     <Modal centered show={type === 'rename'} onHide={handleModalClose}>
@@ -134,7 +134,7 @@ const RenameChannel = () => {
         </Container>
       </Modal.Body>
     </Modal>
-  );
-};
+  )
+}
 
-export default RenameChannel;
+export default RenameChannel

@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import {
   useEffect,
   useRef,
   useState,
   useCallback,
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+} from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Container,
   Col,
@@ -13,10 +13,10 @@ import {
   Image,
   Spinner,
   ListGroup,
-} from 'react-bootstrap';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-import { selectToken } from '../store/authSlice.js';
+} from 'react-bootstrap'
+import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import { selectToken } from '../store/authSlice.js'
 import {
   addChannels,
   addChannel,
@@ -24,91 +24,91 @@ import {
   removeChannel,
   updateChannelName,
   selectors as channelSelectors,
-} from '../store/channelSlice.js';
-import { removeMessagesByChannelId } from '../store/messageSlice.js';
-import { setOpen } from '../store/modalSlice.js';
-import ChannelDropdown from './ChannelDropdown.jsx';
-import socket from '../socket.js';
-import API_ROUTES from '../routes/routes.js';
+} from '../store/channelSlice.js'
+import { removeMessagesByChannelId } from '../store/messageSlice.js'
+import { setOpen } from '../store/modalSlice.js'
+import ChannelDropdown from './ChannelDropdown.jsx'
+import socket from '../socket.js'
+import API_ROUTES from '../routes/routes.js'
 
 const Channels = () => {
-  const dispatch = useDispatch();
-  const redir = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const { t } = useTranslation();
+  const dispatch = useDispatch()
+  const redir = useNavigate()
+  const [isLoading, setIsLoading] = useState(true)
+  const { t } = useTranslation()
 
-  const channels = useSelector(channelSelectors.selectAll);
-  const currentChannelId = useSelector((state) => state.channels.currentChannel.id);
-  const token = useSelector(selectToken);
+  const channels = useSelector(channelSelectors.selectAll)
+  const currentChannelId = useSelector((state) => state.channels.currentChannel.id)
+  const token = useSelector(selectToken)
 
-  const lastChannelItemRef = useRef({});
+  const lastChannelItemRef = useRef({})
 
   const scrollToLastChannelItem = useCallback((id) => {
-    const element = lastChannelItemRef.current[id];
+    const element = lastChannelItemRef.current[id]
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsLoading(true)
     axios.get(API_ROUTES.channels.list(), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
-      dispatch(setCurrentChannel(response.data[0].id));
-      dispatch(addChannels(response.data));
-      setIsLoading(false);
+      dispatch(setCurrentChannel(response.data[0].id))
+      dispatch(addChannels(response.data))
+      setIsLoading(false)
     }).catch((error) => {
-      setIsLoading(false);
+      setIsLoading(false)
       if (error.response?.status === 401) {
-        redir('/login');
+        redir('/login')
       }
-    });
-  }, [token, dispatch, redir, t]);
+    })
+  }, [token, dispatch, redir, t])
 
   const handleNewChannel = useCallback((payload) => {
-    dispatch(addChannel(payload));
+    dispatch(addChannel(payload))
     setTimeout(() => {
-      scrollToLastChannelItem();
-    }, 0);
-  }, [dispatch, scrollToLastChannelItem]);
+      scrollToLastChannelItem()
+    }, 0)
+  }, [dispatch, scrollToLastChannelItem])
 
   const handleRemoveChannel = useCallback((payload) => {
-    const { id: removedChannelId } = payload;
-    dispatch(removeChannel({ id: removedChannelId }));
-    dispatch(removeMessagesByChannelId(removedChannelId));
+    const { id: removedChannelId } = payload
+    dispatch(removeChannel({ id: removedChannelId }))
+    dispatch(removeMessagesByChannelId(removedChannelId))
     if (currentChannelId === removedChannelId) {
-      const nextChannel = channels.find((channel) => channel.id !== removedChannelId);
+      const nextChannel = channels.find((channel) => channel.id !== removedChannelId)
       if (nextChannel) {
-        dispatch(setCurrentChannel(nextChannel.id));
+        dispatch(setCurrentChannel(nextChannel.id))
       }
     }
-  }, [dispatch, channels, currentChannelId]);
+  }, [dispatch, channels, currentChannelId])
 
   const handleRenameChannel = useCallback((payload) => {
-    const { id, name } = payload;
-    dispatch(updateChannelName({ id, name }));
-  }, [dispatch]);
+    const { id, name } = payload
+    dispatch(updateChannelName({ id, name }))
+  }, [dispatch])
 
   useEffect(() => {
-    socket.on('newChannel', handleNewChannel);
-    socket.on('removeChannel', handleRemoveChannel);
-    socket.on('renameChannel', handleRenameChannel);
+    socket.on('newChannel', handleNewChannel)
+    socket.on('removeChannel', handleRemoveChannel)
+    socket.on('renameChannel', handleRenameChannel)
 
     return () => {
-      socket.off('newChannel', handleNewChannel);
-      socket.off('removeChannel', handleRemoveChannel);
-      socket.off('renameChannel', handleRenameChannel);
-    };
-  }, [handleNewChannel, handleRemoveChannel, handleRenameChannel]);
+      socket.off('newChannel', handleNewChannel)
+      socket.off('removeChannel', handleRemoveChannel)
+      socket.off('renameChannel', handleRenameChannel)
+    }
+  }, [handleNewChannel, handleRemoveChannel, handleRenameChannel])
 
   useEffect(() => {
     if (!isLoading && currentChannelId) {
-      scrollToLastChannelItem(currentChannelId);
+      scrollToLastChannelItem(currentChannelId)
     }
-  }, [currentChannelId, isLoading, scrollToLastChannelItem]);
+  }, [currentChannelId, isLoading, scrollToLastChannelItem])
 
   return (
     <Col md={2} className="border-end px-0 bg-light flex-column h-100 d-flex">
@@ -133,9 +133,9 @@ const Channels = () => {
               className="p-0"
               ref={(el) => {
                 if (el) {
-                  lastChannelItemRef.current[channel.id] = el;
+                  lastChannelItemRef.current[channel.id] = el
                 } else {
-                  lastChannelItemRef.current[channel.id] = null;
+                  lastChannelItemRef.current[channel.id] = null
                 }
               }}
             >
@@ -159,7 +159,7 @@ const Channels = () => {
         </ListGroup>
       )}
     </Col>
-  );
-};
+  )
+}
 
-export default Channels;
+export default Channels

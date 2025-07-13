@@ -1,17 +1,17 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { I18nextProvider } from 'react-i18next';
-import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
-import { Provider as ReduxProvider } from 'react-redux';
-import App from './App.jsx';
-import i18nextInstance from './i18n/init.js';
-import store from './store/store.js';
-import rollbarConfig from './rollbar/config.js';
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { I18nextProvider } from 'react-i18next'
+import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react'
+import { Provider as ReduxProvider } from 'react-redux'
+import App from './App.jsx'
+import i18nextInstance from './i18n/init.js'
+import store from './store/store.js'
+import rollbarConfig from './rollbar/config.js'
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById('root')
 
-rootElement.className = 'vh-100 vw-100';
+rootElement.className = 'vh-100 vw-100'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -25,4 +25,4 @@ createRoot(document.getElementById('root')).render(
       </ErrorBoundary>
     </RollbarProvider>
   </StrictMode>,
-);
+)

@@ -1,12 +1,12 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import {
   useEffect,
   useRef,
   useState,
   useCallback,
   useMemo,
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+} from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Container,
   Col,
@@ -15,117 +15,117 @@ import {
   Image,
   InputGroup,
   Spinner,
-} from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import leoProfanity from 'leo-profanity';
-import API_ROUTES from '../routes/routes.js';
+} from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import leoProfanity from 'leo-profanity'
+import API_ROUTES from '../routes/routes.js'
 import {
   setInitialMessages,
   getMessagesForChannel,
   addOneMessage,
-} from '../store/messageSlice.js';
-import { selectors as channelSelectors } from '../store/channelSlice.js';
-import { selectToken, selectUsername } from '../store/authSlice';
-import socket from '../socket.js';
+} from '../store/messageSlice.js'
+import { selectors as channelSelectors } from '../store/channelSlice.js'
+import { selectToken, selectUsername } from '../store/authSlice'
+import socket from '../socket.js'
 
 const Messages = () => {
-  const redir = useNavigate();
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const messagesBoxRef = useRef(null);
-  const messageFocusRef = useRef(null);
-  const [messageText, setMessageText] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const notifyError = () => toast.error(t('toast.error.network'));
+  const redir = useNavigate()
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const messagesBoxRef = useRef(null)
+  const messageFocusRef = useRef(null)
+  const [messageText, setMessageText] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const notifyError = () => toast.error(t('toast.error.network'))
 
-  const currentChannelId = useSelector((state) => state.channels.currentChannel.id);
-  const allChannels = useSelector(channelSelectors.selectAll);
-  const currentChannel = allChannels.find((c) => c.id === currentChannelId);
+  const currentChannelId = useSelector((state) => state.channels.currentChannel.id)
+  const allChannels = useSelector(channelSelectors.selectAll)
+  const currentChannel = allChannels.find((c) => c.id === currentChannelId)
 
-  const currentMessages = useSelector((state) => getMessagesForChannel(state, currentChannelId));
+  const currentMessages = useSelector((state) => getMessagesForChannel(state, currentChannelId))
 
   const messagesCount = useMemo(() => {
-    const count = currentMessages.length;
+    const count = currentMessages.length
     const getEndOfMessage = (n) => {
-      const lastTwo = n % 100;
-      const lastOne = n % 10;
+      const lastTwo = n % 100
+      const lastOne = n % 10
 
-      if (lastTwo >= 11 && lastTwo <= 14) return 'many_messages';
-      if (lastOne === 1) return 'one_message';
-      if (lastOne >= 2 && lastOne <= 4) return 'few_messages';
-      return 'many_messages';
-    };
-    return t(`messageCounter.${getEndOfMessage(count)}`, { count });
-  }, [currentMessages, t]);
+      if (lastTwo >= 11 && lastTwo <= 14) return 'many_messages'
+      if (lastOne === 1) return 'one_message'
+      if (lastOne >= 2 && lastOne <= 4) return 'few_messages'
+      return 'many_messages'
+    }
+    return t(`messageCounter.${getEndOfMessage(count)}`, { count })
+  }, [currentMessages, t])
 
-  const username = useSelector(selectUsername);
-  const token = useSelector(selectToken);
+  const username = useSelector(selectUsername)
+  const token = useSelector(selectToken)
 
   useEffect(() => {
     if (messagesBoxRef.current) {
-      messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
+      messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight
     }
-  }, [currentMessages]);
+  }, [currentMessages])
 
   useEffect(() => {
     if (messageFocusRef.current) {
-      messageFocusRef.current.focus();
+      messageFocusRef.current.focus()
     }
-  }, [currentChannelId]);
+  }, [currentChannelId])
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsLoading(true)
     axios.get(API_ROUTES.messages.list(), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => {
-        dispatch(setInitialMessages(response.data));
-        setIsLoading(false);
+        dispatch(setInitialMessages(response.data))
+        setIsLoading(false)
       })
       .catch((error) => {
-        setIsLoading(false);
+        setIsLoading(false)
         if (error.response.status === 401) {
-          redir('/login');
+          redir('/login')
         }
-      });
-  }, [token, dispatch, redir, t]);
+      })
+  }, [token, dispatch, redir, t])
 
   const handleNewMessage = useCallback((payload) => {
-    dispatch(addOneMessage(payload));
-  }, [dispatch]);
+    dispatch(addOneMessage(payload))
+  }, [dispatch])
 
   useEffect(() => {
-    socket.on('newMessage', handleNewMessage);
+    socket.on('newMessage', handleNewMessage)
 
     return () => {
-      socket.off('newMessage', handleNewMessage);
-    };
-  }, [handleNewMessage]);
+      socket.off('newMessage', handleNewMessage)
+    }
+  }, [handleNewMessage])
 
   const handleSendMessage = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const trimmedMessage = messageText.trim();
+    const trimmedMessage = messageText.trim()
     if (!trimmedMessage) {
-      return;
+      return
     }
 
-    const filteredName = leoProfanity.clean(trimmedMessage);
+    const filteredName = leoProfanity.clean(trimmedMessage)
 
     // if (filteredName !== trimmedMessage) {
-    //   toast.error(t('messages.error.profanity'));
-    //   return;
+    //   toast.error(t('messages.error.profanity'))
+    //   return
     // }
 
     const newMessageData = {
       body: filteredName,
       channelId: currentChannelId,
       username,
-    };
+    }
 
     axios.post(API_ROUTES.messages.list(), newMessageData, {
       headers: {
@@ -134,9 +134,9 @@ const Messages = () => {
     })
       .then(() => setMessageText(''))
       .catch(() => {
-        notifyError();
-      });
-  };
+        notifyError()
+      })
+  }
 
   return (
     <Col className="p-0 h-100 d-flex flex-column">
@@ -188,7 +188,7 @@ const Messages = () => {
         </Form>
       </Container>
     </Col>
-  );
-};
+  )
+}
 
-export default Messages;
+export default Messages

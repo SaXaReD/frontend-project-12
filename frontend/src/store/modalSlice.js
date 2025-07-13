@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit'
 
 const modalSlice = createSlice({
   name: 'modal',
@@ -9,18 +9,18 @@ const modalSlice = createSlice({
   },
   reducers: {
     setOpen: (state, { payload }) => {
-      const { type, channelId } = payload;
-      state.type = type;
-      state.isOpen = true;
-      state.ChannelId = channelId;
+      const { type, channelId } = payload
+      state.type = type
+      state.isOpen = true
+      state.ChannelId = channelId
     },
     setClose: (state) => {
-      state.type = null;
-      state.isOpen = false;
-      state.ChannelId = null;
+      state.type = null
+      state.isOpen = false
+      state.ChannelId = null
     },
   },
-});
+})
 
-export const { setOpen, setClose } = modalSlice.actions;
-export default modalSlice.reducer;
+export const { setOpen, setClose } = modalSlice.actions
+export default modalSlice.reducer

@@ -1,4 +1,4 @@
-const BASE_URL = '/api/v1';
+const BASE_URL = '/api/v1'
 
 const API_ROUTES = {
   messages: {
@@ -11,6 +11,6 @@ const API_ROUTES = {
   },
   login: () => `${BASE_URL}/login`,
   signup: () => `${BASE_URL}/signup`,
-};
+}
 
-export default API_ROUTES;
+export default API_ROUTES

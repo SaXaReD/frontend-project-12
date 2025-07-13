@@ -1,32 +1,32 @@
-import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useFormik } from 'formik';
+import { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { useFormik } from 'formik'
 import {
   Button,
   Form,
   Card,
   Container,
   Spinner,
-} from 'react-bootstrap';
-import axios from 'axios';
-import * as yup from 'yup';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
-import leoProfanity from 'leo-profanity';
-import { setUserData } from '../store/authSlice';
-import API_ROUTES from '../routes/routes';
+} from 'react-bootstrap'
+import axios from 'axios'
+import * as yup from 'yup'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import leoProfanity from 'leo-profanity'
+import { setUserData } from '../store/authSlice'
+import API_ROUTES from '../routes/routes'
 
 const SignUp = () => {
-  const usernameRef = useRef();
-  const redir = useNavigate();
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const notifyError = () => toast.error(t('toast.error.network'));
+  const usernameRef = useRef()
+  const redir = useNavigate()
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const notifyError = () => toast.error(t('toast.error.network'))
 
   useEffect(() => {
-    usernameRef.current.focus();
-  }, []);
+    usernameRef.current.focus()
+  }, [])
 
   const validationSchema = yup.object().shape({
     username: yup
@@ -42,7 +42,7 @@ const SignUp = () => {
       .string()
       .oneOf([yup.ref('password'), null], t('signup.error.dontMatch'))
       .required(t('error.requiredField')),
-  });
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -53,37 +53,37 @@ const SignUp = () => {
     validationSchema,
     validateOnChange: true,
     onSubmit: async (values, { setSubmitting }) => {
-      setSubmitting(true);
+      setSubmitting(true)
 
-      const filteredUsername = leoProfanity.clean(values.username);
+      const filteredUsername = leoProfanity.clean(values.username)
 
       if (filteredUsername !== values.username) {
-        formik.setFieldError('username', t('signup.error.profanity'));
-        return;
+        formik.setFieldError('username', t('signup.error.profanity'))
+        return
       }
 
       try {
         const response = await axios.post(API_ROUTES.signup(), {
           username: filteredUsername.trim(),
           password: values.password,
-        });
+        })
 
         if (response.status === 201) {
-          dispatch(setUserData(response.data));
-          redir('/');
+          dispatch(setUserData(response.data))
+          redir('/')
         }
       } catch (error) {
         if (error.response?.status === 409) {
-          formik.setFieldError('username', t('signup.error.alreadyExists'));
-          usernameRef.current.select();
+          formik.setFieldError('username', t('signup.error.alreadyExists'))
+          usernameRef.current.select()
         } else {
-          notifyError();
+          notifyError()
         }
       } finally {
-        setSubmitting(false);
+        setSubmitting(false)
       }
     },
-  });
+  })
 
   return (
     <Container className="h-100 align-content-center">
@@ -164,7 +164,7 @@ const SignUp = () => {
         </Card.Body>
       </Card>
     </Container>
-  );
-};
+  )
+}
 
-export default SignUp;
+export default SignUp

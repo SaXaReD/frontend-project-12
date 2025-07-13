@@ -1,25 +1,25 @@
-import { useSelector } from 'react-redux';
-import CreateChannel from './Modal/CreateChannel.jsx';
-import RenameChannel from './Modal/RenameChannel.jsx';
-import ConfirmDelete from './Modal/ConfirmDelete.jsx';
+import { useSelector } from 'react-redux'
+import CreateChannel from './Modal/CreateChannel.jsx'
+import RenameChannel from './Modal/RenameChannel.jsx'
+import ConfirmDelete from './Modal/ConfirmDelete.jsx'
 
 const Modal = () => {
-  const { type } = useSelector((state) => state.modal);
+  const { type } = useSelector((state) => state.modal)
 
   const renderModal = () => {
     switch (type) {
       case 'rename':
-        return <RenameChannel />;
+        return <RenameChannel />
       case 'delete':
-        return <ConfirmDelete />;
+        return <ConfirmDelete />
       case 'create':
-        return <CreateChannel />;
+        return <CreateChannel />
       default:
-        return null;
+        return null
     }
-  };
+  }
 
-  return renderModal();
-};
+  return renderModal()
+}
 
-export default Modal;
+export default Modal

@@ -1,38 +1,38 @@
-import { useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useRef, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Container,
   Button,
   Spinner,
   Modal,
   Form,
-} from 'react-bootstrap';
-import * as yup from 'yup';
-import { useFormik } from 'formik';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
-import leoProfanity from 'leo-profanity';
+} from 'react-bootstrap'
+import * as yup from 'yup'
+import { useFormik } from 'formik'
+import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import leoProfanity from 'leo-profanity'
 import {
   addChannel,
   setCurrentChannel,
   selectors as channelSelectors,
-} from '../../store/channelSlice.js';
-import { selectToken } from '../../store/authSlice.js';
-import { setClose } from '../../store/modalSlice.js';
-import API_ROUTES from '../../routes/routes.js';
+} from '../../store/channelSlice.js'
+import { selectToken } from '../../store/authSlice.js'
+import { setClose } from '../../store/modalSlice.js'
+import API_ROUTES from '../../routes/routes.js'
 
 const CreateChannel = () => {
-  const dispatch = useDispatch();
-  const inputRef = useRef(null);
-  const { t } = useTranslation();
-  const notifySuccess = () => toast.success(t('toast.success.channelCreated'));
-  const notifyError = () => toast.error(t('toast.error.network'));
+  const dispatch = useDispatch()
+  const inputRef = useRef(null)
+  const { t } = useTranslation()
+  const notifySuccess = () => toast.success(t('toast.success.channelCreated'))
+  const notifyError = () => toast.error(t('toast.error.network'))
 
-  const channels = useSelector(channelSelectors.selectAll);
-  const token = useSelector(selectToken);
-  const existingNames = Object.values(channels).map((el) => el.name);
-  const { type } = useSelector((state) => state.modal);
+  const channels = useSelector(channelSelectors.selectAll)
+  const token = useSelector(selectToken)
+  const existingNames = Object.values(channels).map((el) => el.name)
+  const { type } = useSelector((state) => state.modal)
 
   const validationSchema = yup.object().shape({
     name: yup
@@ -41,7 +41,7 @@ const CreateChannel = () => {
       .max(20, t('error.minLengthName'))
       .required(t('error.requiredField'))
       .notOneOf(existingNames, t('error.uniqueName')),
-  });
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -50,14 +50,14 @@ const CreateChannel = () => {
     validationSchema,
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting }) => {
-      if (!token) return;
-      setSubmitting(true);
+      if (!token) return
+      setSubmitting(true)
 
-      const filteredName = leoProfanity.clean(values.name);
+      const filteredName = leoProfanity.clean(values.name)
 
       // if (filteredName !== values.name) {
-      //   formik.setFieldError('name', t('channels.error.profanity'));
-      //   return;
+      //   formik.setFieldError('name', t('channels.error.profanity'))
+      //   return
       // }
 
       try {
@@ -65,31 +65,31 @@ const CreateChannel = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-        dispatch(addChannel(response.data));
-        dispatch(setCurrentChannel(response.data.id));
-        formik.resetForm();
-        notifySuccess();
+        })
+        dispatch(addChannel(response.data))
+        dispatch(setCurrentChannel(response.data.id))
+        formik.resetForm()
+        notifySuccess()
       } catch (error) {
-        console.error('Error creating channel:', error);
-        notifyError();
+        console.error('Error creating channel:', error)
+        notifyError()
       } finally {
-        setSubmitting(false);
-        dispatch(setClose());
+        setSubmitting(false)
+        dispatch(setClose())
       }
     },
-  });
+  })
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus()
     }
-  }, []);
+  }, [])
 
   const handleModal = () => {
-    formik.resetForm();
-    dispatch(setClose());
-  };
+    formik.resetForm()
+    dispatch(setClose())
+  }
 
   return (
     <Modal centered show={type === 'create'} onHide={() => dispatch(setClose())}>
@@ -125,7 +125,7 @@ const CreateChannel = () => {
         </Container>
       </Modal.Body>
     </Modal>
-  );
-};
+  )
+}
 
-export default CreateChannel;
+export default CreateChannel

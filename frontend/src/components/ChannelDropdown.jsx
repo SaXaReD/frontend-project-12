@@ -1,25 +1,25 @@
-import { forwardRef } from 'react';
-import { Dropdown, ButtonGroup, Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { setOpen } from '../store/modalSlice.js';
-import { setCurrentChannel } from '../store/channelSlice.js';
+import { forwardRef } from 'react'
+import { Dropdown, ButtonGroup, Button } from 'react-bootstrap'
+import { useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
+import { setOpen } from '../store/modalSlice.js'
+import { setCurrentChannel } from '../store/channelSlice.js'
 
 const ChannelDropdown = forwardRef(({ channelId, channelName, isActive }, ref) => {
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
 
   const handleRename = () => {
-    dispatch(setOpen({ type: 'rename', channelId }));
-  };
+    dispatch(setOpen({ type: 'rename', channelId }))
+  }
 
   const handleDelete = () => {
-    dispatch(setOpen({ type: 'delete', channelId }));
-  };
+    dispatch(setOpen({ type: 'delete', channelId }))
+  }
 
   const handleChannelClick = () => {
-    dispatch(setCurrentChannel(channelId));
-  };
+    dispatch(setCurrentChannel(channelId))
+  }
 
   return (
     <Dropdown as={ButtonGroup} ref={ref} className="position-static w-100">
@@ -44,9 +44,9 @@ const ChannelDropdown = forwardRef(({ channelId, channelName, isActive }, ref) =
         <Dropdown.Item onClick={handleRename}>{t('dropdown.rename')}</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
-  );
-});
+  )
+})
 
-ChannelDropdown.displayName = 'ChannelDropdown';
+ChannelDropdown.displayName = 'ChannelDropdown'
 
-export default ChannelDropdown;
+export default ChannelDropdown

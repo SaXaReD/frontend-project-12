@@ -1,49 +1,49 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Button,
   Spinner,
   Modal,
   Container,
-} from 'react-bootstrap';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
-import { selectToken } from '../../store/authSlice.js';
-import { setClose } from '../../store/modalSlice.js';
-import API_ROUTES from '../../routes/routes.js';
+} from 'react-bootstrap'
+import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { selectToken } from '../../store/authSlice.js'
+import { setClose } from '../../store/modalSlice.js'
+import API_ROUTES from '../../routes/routes.js'
 
 const ConfirmDelete = () => {
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const notifySuccess = () => toast.success(t('toast.success.channelRemoved'));
-  const notifyError = () => toast.error(t('toast.error.network'));
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const [isDeleting, setIsDeleting] = useState(false)
+  const notifySuccess = () => toast.success(t('toast.success.channelRemoved'))
+  const notifyError = () => toast.error(t('toast.error.network'))
 
-  const token = useSelector(selectToken);
-  const { type, ChannelId } = useSelector((state) => state.modal);
+  const token = useSelector(selectToken)
+  const { type, ChannelId } = useSelector((state) => state.modal)
 
   const handleDeleteConfirmed = async () => {
-    setIsDeleting(true);
+    setIsDeleting(true)
     try {
       await axios.delete(API_ROUTES.channels.channelById(ChannelId), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
-      dispatch(setClose());
-      notifySuccess();
+      })
+      dispatch(setClose())
+      notifySuccess()
     } catch (error) {
-      console.error('Error deleting channel:', error);
-      notifyError();
+      console.error('Error deleting channel:', error)
+      notifyError()
     } finally {
-      setIsDeleting(false);
+      setIsDeleting(false)
     }
-  };
+  }
 
   const handleModal = () => {
-    dispatch(setClose());
-  };
+    dispatch(setClose())
+  }
 
   return (
     <Modal centered show={type === 'delete'} onHide={() => dispatch(setClose())}>
@@ -72,7 +72,7 @@ const ConfirmDelete = () => {
         </Container>
       </Modal.Body>
     </Modal>
-  );
-};
+  )
+}
 
-export default ConfirmDelete;
+export default ConfirmDelete
