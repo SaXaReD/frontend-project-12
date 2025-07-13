@@ -170,6 +170,7 @@ const Messages = () => {
               placeholder={t('messages.placeholder')}
               className='border-0 p-0 ps-2'
               value={messageText}
+              aria-label={t('messages.label')}
               onChange={(e) => setMessageText(e.target.value)}
             />
             <Button variant='none' type="submit" className="btn-group-vertical" disabled={!messageText.trim()}>
