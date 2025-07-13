@@ -31,12 +31,12 @@ const Header = () => {
           {t('header.title')}
         </Button>
         {token
-          ?
-          (
+          ? (
             <Button variant="light" type="button" onClick={logout}>
               {t('header.logout')}
             </Button>
-          ) : null}
+          )
+          : null}
       </Container>
     </Navbar>
   )

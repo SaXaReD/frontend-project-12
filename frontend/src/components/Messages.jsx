@@ -148,14 +148,14 @@ const Messages = () => {
         <span className="text-muted">{messagesCount}</span>
       </Container>
       {isLoading
-        ?
-        (
+        ? (
           <Container className="d-flex justify-content-center align-items-center h-100">
             <Spinner animation="border" role="status">
               <span className="visually-hidden">{t('messages.loading')}</span>
             </Spinner>
           </Container>
-        ) : (
+        )
+        : (
           <Container
             className="overflow-auto px-5"
             ref={messagesBoxRef}

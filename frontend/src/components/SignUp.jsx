@@ -148,8 +148,7 @@ const SignUp = () => {
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting
-                ?
-                (
+                ? (
                   <>
                     <Spinner
                       as="span"
@@ -161,7 +160,8 @@ const SignUp = () => {
                     />
                     {t('signup.loading')}
                   </>
-                ) : (
+                )
+                : (
                   t('signup.registrationBtn')
                 )}
             </Button>
