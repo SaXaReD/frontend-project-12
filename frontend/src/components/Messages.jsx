@@ -155,7 +155,7 @@ const Messages = () => {
               </Spinner>
             </Container>
           )
-          : (
+        : (
             <Container
               className="overflow-auto px-5"
               ref={messagesBoxRef}

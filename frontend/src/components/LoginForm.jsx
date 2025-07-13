@@ -128,7 +128,7 @@ const LoginForm = () => {
                       {t('login.enterLoading')}
                     </>
                   )
-                  : (
+                : (
                     t('login.enter')
                   )}
             </Button>

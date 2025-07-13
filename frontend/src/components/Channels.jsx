@@ -127,7 +127,7 @@ const Channels = () => {
               </Spinner>
             </Container>
           )
-          : (
+        : (
             <ListGroup className="d-flex flex-column mb-2 overflow-auto flex-nowrap h-100">
               {channels.map(channel => (
                 <ListGroup.Item
@@ -144,21 +144,21 @@ const Channels = () => {
                 >
                   {channel.removable
                     ? (
-                      <ChannelDropdown
-                        channelId={channel.id}
-                        channelName={channel.name}
-                        isActive={currentChannelId === channel.id}
-                      />
-                    )
+                        <ChannelDropdown
+                          channelId={channel.id}
+                          channelName={channel.name}
+                          isActive={currentChannelId === channel.id}
+                        />
+                      )
                     : (
-                      <Button
-                        variant={currentChannelId === channel.id ? 'secondary' : 'light'}
-                        className={`w-100 rounded-0 text-start text-truncate ${currentChannelId === channel.id ? 'text-white' : 'text-dark'}`}
-                        onClick={() => dispatch(setCurrentChannel(channel.id))}
-                      >
-                        {`# ${channel.name}`}
-                      </Button>
-                    )}
+                        <Button
+                          variant={currentChannelId === channel.id ? 'secondary' : 'light'}
+                          className={`w-100 rounded-0 text-start text-truncate ${currentChannelId === channel.id ? 'text-white' : 'text-dark'}`}
+                          onClick={() => dispatch(setCurrentChannel(channel.id))}
+                        >
+                          {`# ${channel.name}`}
+                        </Button>
+                      )}
                 </ListGroup.Item>
               ))}
             </ListGroup>

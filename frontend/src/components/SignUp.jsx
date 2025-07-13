@@ -161,7 +161,7 @@ const SignUp = () => {
                       {t('signup.loading')}
                     </>
                   )
-                  : (
+                : (
                     t('signup.registrationBtn')
                   )}
             </Button>
