@@ -12,7 +12,7 @@ export default {
       enter: 'Войти',
       enterLoading: 'Вход в систему',
       noAccount: 'Нет аккаунта?',
-      registrateAccount : 'Зарегистрируйтесь',
+      registrateAccount : 'Регистрация',
       username: 'Ваш ник',
       password: 'Пароль',
     },
