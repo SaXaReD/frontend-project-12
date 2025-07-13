@@ -106,7 +106,7 @@ const CreateChannel = () => {
                 value={formik.values.name}
                 name="name"
                 id="name"
-                aria-label="name"
+                aria-label={t('modal.createChannel.body')}
                 type="text"
                 isInvalid={formik.touched.name && formik.errors.name}
               />
