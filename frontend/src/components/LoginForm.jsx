@@ -115,7 +115,8 @@ const LoginForm = () => {
             </Form.Floating>
             <Button type="submit" variant="outline-primary w-100" disabled={formik.isSubmitting}>
               {formik.isSubmitting
-                ? (
+                ?
+                (
                   <>
                     <Spinner
                       as="span"

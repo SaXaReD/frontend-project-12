@@ -120,7 +120,8 @@ const Channels = () => {
         </Button>
       </Container>
       {isLoading
-        ? (
+        ?
+        (
           <Container className="d-flex justify-content-center align-items-center h-100" key="loading-spinner">
             <Spinner animation="border" role="status">
               <span className="visually-hidden">{t('channels.loading')}</span>
@@ -142,7 +143,8 @@ const Channels = () => {
                 }}
               >
                 {channel.removable
-                  ? (
+                  ?
+                  (
                     <ChannelDropdown
                       channelId={channel.id}
                       channelName={channel.name}

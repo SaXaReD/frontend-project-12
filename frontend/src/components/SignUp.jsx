@@ -148,7 +148,8 @@ const SignUp = () => {
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting
-                ? (
+                ?
+                (
                   <>
                     <Spinner
                       as="span"
