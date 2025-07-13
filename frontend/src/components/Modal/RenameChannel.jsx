@@ -16,6 +16,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import leoProfanity from 'leo-profanity';
+import API_ROUTES from '../../routes/routes.js';
 
 const RenameChannel = () => {
   const dispatch = useDispatch();
@@ -60,7 +61,7 @@ const RenameChannel = () => {
       }
 
       try {
-        await axios.patch(`/api/v1/channels/${ChannelId}`, { name: values.name.trim() }, {
+        await axios.patch(API_ROUTES.channels.channelById(ChannelId), { name: values.name.trim() }, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -8,6 +8,7 @@ import * as yup from 'yup';
 import { setUserData } from '../store/authSlice';
 import { useTranslation } from "react-i18next";
 import { toast } from 'react-toastify';
+import API_ROUTES from '../routes/routes';
 
 const LoginForm = () => {
   const inputRef = useRef();
@@ -40,7 +41,7 @@ const LoginForm = () => {
       }
       try {
         setSubmitting(true);
-        const response = await axios.post('/api/v1/login', values);
+        const response = await axios.post(API_ROUTES.login(), values);
 
         if (response.status === 200) {
           const { username, token } = response.data;

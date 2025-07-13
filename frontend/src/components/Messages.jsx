@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import leoProfanity from 'leo-profanity';
+import API_ROUTES from '../routes/routes.js';
 
 const Messages = () => {
   const redir = useNavigate();
@@ -72,7 +73,7 @@ const Messages = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    axios.get('/api/v1/messages', {
+    axios.get(API_ROUTES.messages.list(), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -122,7 +123,7 @@ const Messages = () => {
       username: username,
     };
 
-    axios.post('/api/v1/messages', newMessageData, {
+    axios.post(API_ROUTES.messages.list(), newMessageData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

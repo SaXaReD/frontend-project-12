@@ -1,0 +1,16 @@
+const BASE_URL = '/api/v1';
+
+const API_ROUTES = {
+  messages: {
+    list: () => `${BASE_URL}/messages`,
+    listByChannel: (id) => `${BASE_URL}/messages?channelId=${id}`, // for edit messages
+  },
+  channels: {
+    list: () => `${BASE_URL}/channels`,
+    channelById: (id) => `${BASE_URL}/channels/${id}`,
+  },
+  login: () => `${BASE_URL}/login`,
+  signup: () => `${BASE_URL}/signup`,
+};
+
+export default API_ROUTES;

@@ -24,6 +24,7 @@ import {
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import socket from '../socket.js';
+import API_ROUTES from '../routes/routes.js';
 
 const Channels = () => {
   const dispatch = useDispatch();
@@ -46,7 +47,7 @@ const Channels = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    axios.get('/api/v1/channels', {
+    axios.get(API_ROUTES.channels.list(), {
       headers: {
         Authorization: `Bearer ${token}`,
       },

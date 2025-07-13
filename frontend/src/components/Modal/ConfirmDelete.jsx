@@ -11,6 +11,7 @@ import { setClose } from '../../store/modalSlice.js';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import API_ROUTES from '../../routes/routes.js';
 
 const ConfirmDelete = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const ConfirmDelete = () => {
   const handleDeleteConfirmed = async () => {
     setIsDeleting(true);
     try {
-      await axios.delete(`/api/v1/channels/${ChannelId}`, {
+      await axios.delete(API_ROUTES.channels.channelById(ChannelId), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

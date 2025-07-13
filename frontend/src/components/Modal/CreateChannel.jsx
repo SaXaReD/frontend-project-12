@@ -20,6 +20,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import leoProfanity from 'leo-profanity';
+import API_ROUTES from '../../routes/routes.js';
 
 const CreateChannel = () => {
   const dispatch = useDispatch();
@@ -60,7 +61,7 @@ const CreateChannel = () => {
       }
 
       try {
-        const response = await axios.post('/api/v1/channels', { name: filteredName }, {
+        const response = await axios.post(API_ROUTES.channels.list(), { name: filteredName }, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
