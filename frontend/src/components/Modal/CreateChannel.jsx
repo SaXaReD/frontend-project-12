@@ -37,8 +37,8 @@ const CreateChannel = () => {
     const validationSchema = yup.object().shape({
       name: yup
         .string()
-        .min(3, t('error.minLengthUsername'))
-        .max(20, t('error.maxLength'))
+        .min(3, t('error.minLengthName'))
+        .max(20, t('error.minLengthName'))
         .required(t('error.requiredField'))
         .notOneOf(existingNames, t('error.uniqueName')),
     });
