@@ -1,11 +1,6 @@
-import Rollbar from 'rollbar';
-import process from 'process';
-
 const rollbarConfig = {
-  accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
-  environment: 'development',
+  accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
+  environment: import.meta.env.MODE === 'development' ? 'development' : 'production',
 };
 
-const rollbar = new Rollbar(rollbarConfig);
-
-export default rollbar;
+export default rollbarConfig;
