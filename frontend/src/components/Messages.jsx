@@ -40,11 +40,11 @@ const Messages = () => {
   const [isLoading, setIsLoading] = useState(true)
   const notifyError = () => toast.error(t('toast.error.network'))
 
-  const currentChannelId = useSelector((state) => state.channels.currentChannel.id)
+  const currentChannelId = useSelector(state => state.channels.currentChannel.id)
   const allChannels = useSelector(channelSelectors.selectAll)
-  const currentChannel = allChannels.find((c) => c.id === currentChannelId)
+  const currentChannel = allChannels.find(c => c.id === currentChannelId)
 
-  const currentMessages = useSelector((state) => getMessagesForChannel(state, currentChannelId))
+  const currentMessages = useSelector(state => getMessagesForChannel(state, currentChannelId))
 
   const messagesCount = useMemo(() => {
     const count = currentMessages.length
@@ -147,26 +147,27 @@ const Messages = () => {
         </p>
         <span className="text-muted">{messagesCount}</span>
       </Container>
-      {isLoading ? (
-        <Container className="d-flex justify-content-center align-items-center h-100">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">{t('messages.loading')}</span>
-          </Spinner>
-        </Container>
-      ) : (
-        <Container
-          className="overflow-auto px-5"
-          ref={messagesBoxRef}
-        >
-          {currentMessages.map((message) => (
-            <Container key={message.id} className="text-break mb-2">
-              <b>{message.username}</b>
-              {': '}
-              {message.body}
-            </Container>
-          ))}
-        </Container>
-      )}
+      {isLoading
+        ? (
+          <Container className="d-flex justify-content-center align-items-center h-100">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">{t('messages.loading')}</span>
+            </Spinner>
+          </Container>
+        ) : (
+          <Container
+            className="overflow-auto px-5"
+            ref={messagesBoxRef}
+          >
+            {currentMessages.map(message => (
+              <Container key={message.id} className="text-break mb-2">
+                <b>{message.username}</b>
+                {': '}
+                {message.body}
+              </Container>
+            ))}
+          </Container>
+        )}
       <Container className="mt-auto px-5 py-3">
         <Form onSubmit={handleSendMessage} className="py-1 border rounded-2">
           <InputGroup hasValidation>
@@ -178,7 +179,7 @@ const Messages = () => {
               className="border-0 p-0 ps-2"
               value={messageText}
               aria-label={t('messages.label')}
-              onChange={(e) => setMessageText(e.target.value)}
+              onChange={e => setMessageText(e.target.value)}
             />
             <Button variant="none" type="submit" className="btn-group-vertical" disabled={!messageText.trim()}>
               <Image src="/images/svg/send.svg" />

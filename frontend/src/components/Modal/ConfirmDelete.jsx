@@ -21,7 +21,7 @@ const ConfirmDelete = () => {
   const notifyError = () => toast.error(t('toast.error.network'))
 
   const token = useSelector(selectToken)
-  const { type, ChannelId } = useSelector((state) => state.modal)
+  const { type, ChannelId } = useSelector(state => state.modal)
 
   const handleDeleteConfirmed = async () => {
     setIsDeleting(true)
@@ -33,10 +33,12 @@ const ConfirmDelete = () => {
       })
       dispatch(setClose())
       notifySuccess()
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error deleting channel:', error)
       notifyError()
-    } finally {
+    }
+    finally {
       setIsDeleting(false)
     }
   }

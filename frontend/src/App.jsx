@@ -22,7 +22,8 @@ const App = () => {
 
     if (storedToken && storedUsername) {
       dispatch(setUserData({ token: storedToken, username: storedUsername }))
-    } else {
+    }
+    else {
       dispatch(setAuthChecked())
     }
   }, [dispatch])

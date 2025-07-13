@@ -72,14 +72,17 @@ const SignUp = () => {
           dispatch(setUserData(response.data))
           redir('/')
         }
-      } catch (error) {
+      }
+      catch (error) {
         if (error.response?.status === 409) {
           formik.setFieldError('username', t('signup.error.alreadyExists'))
           usernameRef.current.select()
-        } else {
+        }
+        else {
           notifyError()
         }
-      } finally {
+      }
+      finally {
         setSubmitting(false)
       }
     },
@@ -144,21 +147,22 @@ const SignUp = () => {
               variant="outline-primary w-100"
               disabled={formik.isSubmitting}
             >
-              {formik.isSubmitting ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="grow"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    className="me-1"
-                  />
-                  {t('signup.loading')}
-                </>
-              ) : (
-                t('signup.registrationBtn')
-              )}
+              {formik.isSubmitting
+                ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="grow"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                      className="me-1"
+                    />
+                    {t('signup.loading')}
+                  </>
+                ) : (
+                  t('signup.registrationBtn')
+                )}
             </Button>
           </Form>
         </Card.Body>

@@ -12,7 +12,6 @@ export default defineConfig({
         changeOrigin: false,
         secure: false,
       },
-      cors: false,
       '/socket.io': {
         target: 'ws://0.0.0.0:5001',
         ws: true,

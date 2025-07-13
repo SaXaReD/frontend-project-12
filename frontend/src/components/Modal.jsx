@@ -4,7 +4,7 @@ import RenameChannel from './Modal/RenameChannel.jsx'
 import ConfirmDelete from './Modal/ConfirmDelete.jsx'
 
 const Modal = () => {
-  const { type } = useSelector((state) => state.modal)
+  const { type } = useSelector(state => state.modal)
 
   const renderModal = () => {
     switch (type) {

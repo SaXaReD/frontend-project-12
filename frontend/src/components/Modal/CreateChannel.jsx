@@ -31,8 +31,8 @@ const CreateChannel = () => {
 
   const channels = useSelector(channelSelectors.selectAll)
   const token = useSelector(selectToken)
-  const existingNames = Object.values(channels).map((el) => el.name)
-  const { type } = useSelector((state) => state.modal)
+  const existingNames = Object.values(channels).map(el => el.name)
+  const { type } = useSelector(state => state.modal)
 
   const validationSchema = yup.object().shape({
     name: yup
@@ -70,10 +70,12 @@ const CreateChannel = () => {
         dispatch(setCurrentChannel(response.data.id))
         formik.resetForm()
         notifySuccess()
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Error creating channel:', error)
         notifyError()
-      } finally {
+      }
+      finally {
         setSubmitting(false)
         dispatch(setClose())
       }

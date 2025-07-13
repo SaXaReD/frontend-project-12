@@ -56,15 +56,18 @@ const LoginForm = () => {
           dispatch(setUserData(response.data))
           redir('/')
         }
-      } catch (error) {
+      }
+      catch (error) {
         if (error.response?.status === 401) {
           setFieldError('username', t('login.error.invalidCredentials'))
           setFieldError('password', t('login.error.invalidCredentials'))
           setSubmitting(false)
-        } else {
+        }
+        else {
           notifyError()
         }
-      } finally {
+      }
+      finally {
         setSubmitting(false)
       }
     },
@@ -111,21 +114,22 @@ const LoginForm = () => {
               <Form.Label htmlFor="password">{t('login.password')}</Form.Label>
             </Form.Floating>
             <Button type="submit" variant="outline-primary w-100" disabled={formik.isSubmitting}>
-              {formik.isSubmitting ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="grow"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    className="me-1"
-                  />
-                  {t('login.enterLoading')}
-                </>
-              ) : (
-                t('login.enter')
-              )}
+              {formik.isSubmitting
+                ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="grow"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                      className="me-1"
+                    />
+                    {t('login.enterLoading')}
+                  </>
+                ) : (
+                  t('login.enter')
+                )}
             </Button>
           </Form>
         </Card.Body>

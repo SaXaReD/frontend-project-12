@@ -27,10 +27,10 @@ const RenameChannel = () => {
 
   const channels = useSelector(channelSelectors.selectAll)
   const token = useSelector(selectToken)
-  const { type, ChannelId } = useSelector((state) => state.modal)
+  const { type, ChannelId } = useSelector(state => state.modal)
 
-  const channelToRename = channels.find((c) => c.id === ChannelId)
-  const existingNames = channels.map((c) => c.name)
+  const channelToRename = channels.find(c => c.id === ChannelId)
+  const existingNames = channels.map(c => c.name)
   const initialChannelName = channelToRename ? channelToRename.name : ''
 
   const validationSchema = yup.object().shape({
@@ -69,10 +69,12 @@ const RenameChannel = () => {
         formik.resetForm()
         dispatch(setClose())
         notifySuccess()
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Error renaming channel:', error)
         notifyError()
-      } finally {
+      }
+      finally {
         setSubmitting(false)
       }
     },

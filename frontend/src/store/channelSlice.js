@@ -42,14 +42,14 @@ export const {
 } = channelSlice.actions
 
 export const selectors = channelsAdapter.getSelectors(
-  (state) => state.channels,
+  state => state.channels,
 )
 
-const selectChannelsEntities = (state) => state.channels.entities
+const selectChannelsEntities = state => state.channels.entities
 
 export const selectExistingChannelNames = createSelector(
   [selectChannelsEntities],
-  (channels) => Object.values(channels).map((channel) => channel.name),
+  channels => Object.values(channels).map(channel => channel.name),
 )
 
 export default channelSlice.reducer

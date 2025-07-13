@@ -1,7 +1,7 @@
 import { createSlice, createEntityAdapter, createSelector } from '@reduxjs/toolkit'
 
 const messagesAdapter = createEntityAdapter({
-  selectId: (message) => message.id,
+  selectId: message => message.id,
 })
 
 const initialState = messagesAdapter.getInitialState()
@@ -15,8 +15,8 @@ const messageSlice = createSlice({
     removeMessagesByChannelId: (state, action) => {
       const channelIdToRemove = action.payload
       const idsToRemove = Object.values(state.entities)
-        .filter((message) => message.channelId === channelIdToRemove)
-        .map((message) => message.id)
+        .filter(message => message.channelId === channelIdToRemove)
+        .map(message => message.id)
       messagesAdapter.removeMany(state, idsToRemove)
     },
   },
@@ -28,7 +28,7 @@ export const {
   removeMessagesByChannelId,
 } = messageSlice.actions
 export const selectors = messagesAdapter.getSelectors(
-  (state) => state.messages,
+  state => state.messages,
 )
 
 const selectAllMessages = selectors.selectAll
@@ -36,7 +36,7 @@ const selectAllMessages = selectors.selectAll
 export const getMessagesForChannel = createSelector(
   [selectAllMessages, (state, activeChannelId) => activeChannelId],
   (allMessages, activeChannelId) => allMessages
-    .filter((message) => message.channelId === activeChannelId),
+    .filter(message => message.channelId === activeChannelId),
 )
 
 export default messageSlice.reducer
