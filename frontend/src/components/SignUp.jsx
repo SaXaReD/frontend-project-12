@@ -149,21 +149,21 @@ const SignUp = () => {
             >
               {formik.isSubmitting
                 ? (
-                  <>
-                    <Spinner
-                      as="span"
-                      animation="grow"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                      className="me-1"
-                    />
-                    {t('signup.loading')}
-                  </>
-                )
-                : (
-                  t('signup.registrationBtn')
-                )}
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="grow"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        className="me-1"
+                      />
+                      {t('signup.loading')}
+                    </>
+                  )
+                  : (
+                    t('signup.registrationBtn')
+                  )}
             </Button>
           </Form>
         </Card.Body>

@@ -121,48 +121,48 @@ const Channels = () => {
       </Container>
       {isLoading
         ? (
-          <Container className="d-flex justify-content-center align-items-center h-100" key="loading-spinner">
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">{t('channels.loading')}</span>
-            </Spinner>
-          </Container>
-        )
-        : (
-          <ListGroup className="d-flex flex-column mb-2 overflow-auto flex-nowrap h-100">
-            {channels.map(channel => (
-              <ListGroup.Item
-                key={channel.id}
-                className="p-0"
-                ref={(el) => {
-                  if (el) {
-                    lastChannelItemRef.current[channel.id] = el
-                  }
-                  else {
-                    lastChannelItemRef.current[channel.id] = null
-                  }
-                }}
-              >
-                {channel.removable
-                  ? (
-                    <ChannelDropdown
-                      channelId={channel.id}
-                      channelName={channel.name}
-                      isActive={currentChannelId === channel.id}
-                    />
-                  )
-                  : (
-                    <Button
-                      variant={currentChannelId === channel.id ? 'secondary' : 'light'}
-                      className={`w-100 rounded-0 text-start text-truncate ${currentChannelId === channel.id ? 'text-white' : 'text-dark'}`}
-                      onClick={() => dispatch(setCurrentChannel(channel.id))}
-                    >
-                      {`# ${channel.name}`}
-                    </Button>
-                  )}
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        )}
+            <Container className="d-flex justify-content-center align-items-center h-100" key="loading-spinner">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">{t('channels.loading')}</span>
+              </Spinner>
+            </Container>
+          )
+          : (
+            <ListGroup className="d-flex flex-column mb-2 overflow-auto flex-nowrap h-100">
+              {channels.map(channel => (
+                <ListGroup.Item
+                  key={channel.id}
+                  className="p-0"
+                  ref={(el) => {
+                    if (el) {
+                      lastChannelItemRef.current[channel.id] = el
+                    }
+                    else {
+                      lastChannelItemRef.current[channel.id] = null
+                    }
+                  }}
+                >
+                  {channel.removable
+                    ? (
+                      <ChannelDropdown
+                        channelId={channel.id}
+                        channelName={channel.name}
+                        isActive={currentChannelId === channel.id}
+                      />
+                    )
+                    : (
+                      <Button
+                        variant={currentChannelId === channel.id ? 'secondary' : 'light'}
+                        className={`w-100 rounded-0 text-start text-truncate ${currentChannelId === channel.id ? 'text-white' : 'text-dark'}`}
+                        onClick={() => dispatch(setCurrentChannel(channel.id))}
+                      >
+                        {`# ${channel.name}`}
+                      </Button>
+                    )}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          )}
     </Col>
   )
 }

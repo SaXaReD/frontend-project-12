@@ -116,21 +116,21 @@ const LoginForm = () => {
             <Button type="submit" variant="outline-primary w-100" disabled={formik.isSubmitting}>
               {formik.isSubmitting
                 ? (
-                  <>
-                    <Spinner
-                      as="span"
-                      animation="grow"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                      className="me-1"
-                    />
-                    {t('login.enterLoading')}
-                  </>
-                )
-                : (
-                  t('login.enter')
-                )}
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="grow"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        className="me-1"
+                      />
+                      {t('login.enterLoading')}
+                    </>
+                  )
+                  : (
+                    t('login.enter')
+                  )}
             </Button>
           </Form>
         </Card.Body>
