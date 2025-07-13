@@ -2,12 +2,18 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { Button, Form, Card, Container, Spinner } from 'react-bootstrap';
+import {
+  Button,
+  Form,
+  Card,
+  Container,
+  Spinner,
+} from 'react-bootstrap';
 import axios from 'axios';
 import * as yup from 'yup';
-import { setUserData } from '../store/authSlice';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { setUserData } from '../store/authSlice';
 import API_ROUTES from '../routes/routes';
 
 const LoginForm = () => {
@@ -19,7 +25,7 @@ const LoginForm = () => {
   const redir = useNavigate();
 
   useEffect(() => {
-    inputRef.current.focus()
+    inputRef.current.focus();
   }, []);
 
   const validationSchema = yup.object().shape({
@@ -61,16 +67,16 @@ const LoginForm = () => {
       } finally {
         setSubmitting(false);
       }
-    }
+    },
   });
 
   return (
-    <Container className='h-100 align-content-center'>
+    <Container className="h-100 align-content-center">
       <Card className="bg-body-secondary text-center mx-auto" style={{ width: '20.75rem' }}>
         <Card.Body>
           <Form onSubmit={formik.handleSubmit}>
-            <h1 className='text-center mb-4'>{t('login.enter')}</h1>
-            <Form.Floating className='mb-3'>
+            <h1 className="text-center mb-4">{t('login.enter')}</h1>
+            <Form.Floating className="mb-3">
               <Form.Control
                 onChange={formik.handleChange}
                 value={formik.values.username}
@@ -88,7 +94,7 @@ const LoginForm = () => {
               )}
               <Form.Label htmlFor="username">{t('login.username')}</Form.Label>
             </Form.Floating>
-            <Form.Floating className='mb-4'>
+            <Form.Floating className="mb-4">
               <Form.Control
                 type="password"
                 onChange={formik.handleChange}
@@ -123,15 +129,15 @@ const LoginForm = () => {
             </Button>
           </Form>
         </Card.Body>
-        <Card.Footer className='p-4'>
+        <Card.Footer className="p-4">
           <Container className="text-center">
-            <span>{t('login.noAccount')} </span>
-            <Link to='/signup'>{t('login.registrateAccount')}</Link>
+            <span>{t('login.noAccount')}</span>
+            <Link to="/signup">{t('login.registrateAccount')}</Link>
           </Container>
         </Card.Footer>
       </Card>
     </Container>
-  )
-}
+  );
+};
 
 export default LoginForm;

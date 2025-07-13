@@ -2,13 +2,19 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
-import { Button, Form, Card, Container, Spinner } from 'react-bootstrap';
+import {
+  Button,
+  Form,
+  Card,
+  Container,
+  Spinner,
+} from 'react-bootstrap';
 import axios from 'axios';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import { setUserData } from '../store/authSlice';
 import { toast } from 'react-toastify';
 import leoProfanity from 'leo-profanity';
+import { setUserData } from '../store/authSlice';
 import API_ROUTES from '../routes/routes';
 
 const SignUp = () => {
@@ -19,8 +25,8 @@ const SignUp = () => {
   const notifyError = () => toast.error(t('toast.error.network'));
 
   useEffect(() => {
-    usernameRef.current.focus()
-  }, [])
+    usernameRef.current.focus();
+  }, []);
 
   const validationSchema = yup.object().shape({
     username: yup
@@ -80,12 +86,12 @@ const SignUp = () => {
   });
 
   return (
-    <Container className='h-100 align-content-center'>
+    <Container className="h-100 align-content-center">
       <Card className="bg-body-secondary text-center mx-auto" style={{ width: '20.75rem' }}>
         <Card.Body>
           <Form onSubmit={formik.handleSubmit}>
-            <h1 className='text-center mb-4'>{t('signup.title')}</h1>
-            <Form.Floating className='mb-3'>
+            <h1 className="text-center mb-4">{t('signup.title')}</h1>
+            <Form.Floating className="mb-3">
               <Form.Control
                 onChange={formik.handleChange}
                 value={formik.values.username}
@@ -101,7 +107,7 @@ const SignUp = () => {
                 {formik.errors.username}
               </Form.Control.Feedback>
             </Form.Floating>
-            <Form.Floating className='mb-3'>
+            <Form.Floating className="mb-3">
               <Form.Control
                 type="password"
                 onChange={formik.handleChange}
@@ -117,7 +123,7 @@ const SignUp = () => {
                 {formik.errors.password}
               </Form.Control.Feedback>
             </Form.Floating>
-            <Form.Floating className='mb-4'>
+            <Form.Floating className="mb-4">
               <Form.Control
                 type="password"
                 onChange={formik.handleChange}
@@ -158,7 +164,7 @@ const SignUp = () => {
         </Card.Body>
       </Card>
     </Container>
-  )
+  );
 };
 
 export default SignUp;

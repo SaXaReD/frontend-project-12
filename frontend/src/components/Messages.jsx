@@ -1,6 +1,26 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Container,
+  Col,
+  Form,
+  Button,
+  Image,
+  InputGroup,
+  Spinner,
+} from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import leoProfanity from 'leo-profanity';
+import API_ROUTES from '../routes/routes.js';
 import {
   setInitialMessages,
   getMessagesForChannel,
@@ -9,20 +29,6 @@ import {
 import { selectors as channelSelectors } from '../store/channelSlice.js';
 import { selectToken, selectUsername } from '../store/authSlice';
 import socket from '../socket.js';
-import {
-  Container,
-  Col,
-  Form,
-  Button,
-  Image,
-  InputGroup,
-  Spinner
-} from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import leoProfanity from 'leo-profanity';
-import API_ROUTES from '../routes/routes.js';
 
 const Messages = () => {
   const redir = useNavigate();
@@ -38,9 +44,7 @@ const Messages = () => {
   const allChannels = useSelector(channelSelectors.selectAll);
   const currentChannel = allChannels.find((c) => c.id === currentChannelId);
 
-  const currentMessages = useSelector((state) =>
-    getMessagesForChannel(state, currentChannelId)
-  );
+  const currentMessages = useSelector((state) => getMessagesForChannel(state, currentChannelId));
 
   const messagesCount = useMemo(() => {
     const count = currentMessages.length;
@@ -120,7 +124,7 @@ const Messages = () => {
     const newMessageData = {
       body: filteredName,
       channelId: currentChannelId,
-      username: username,
+      username,
     };
 
     axios.post(API_ROUTES.messages.list(), newMessageData, {
@@ -135,10 +139,11 @@ const Messages = () => {
   };
 
   return (
-    <Col className='p-0 h-100 d-flex flex-column'>
+    <Col className="p-0 h-100 d-flex flex-column">
       <Container className="bg-light p-3 mb-4 shadow-sm small">
         <p className="m-0">
-          <b># {currentChannel ? currentChannel.name : t('channelName')}</b>
+          <span># </span>
+          <b>{currentChannel ? currentChannel.name : t('channelName')}</b>
         </p>
         <span className="text-muted">{messagesCount}</span>
       </Container>
@@ -155,26 +160,28 @@ const Messages = () => {
         >
           {currentMessages.map((message) => (
             <Container key={message.id} className="text-break mb-2">
-              <b>{message.username}</b>: {message.body}
+              <b>{message.username}</b>
+              {': '}
+              {message.body}
             </Container>
           ))}
         </Container>
       )}
       <Container className="mt-auto px-5 py-3">
-        <Form onSubmit={handleSendMessage} className='py-1 border rounded-2'>
+        <Form onSubmit={handleSendMessage} className="py-1 border rounded-2">
           <InputGroup hasValidation>
             <Form.Control
               ref={messageFocusRef}
-              name='body'
+              name="body"
               type="text"
               placeholder={t('messages.placeholder')}
-              className='border-0 p-0 ps-2'
+              className="border-0 p-0 ps-2"
               value={messageText}
               aria-label={t('messages.label')}
               onChange={(e) => setMessageText(e.target.value)}
             />
-            <Button variant='none' type="submit" className="btn-group-vertical" disabled={!messageText.trim()}>
-              <Image src='/images/svg/send.svg' />
+            <Button variant="none" type="submit" className="btn-group-vertical" disabled={!messageText.trim()}>
+              <Image src="/images/svg/send.svg" />
               <span className="visually-hidden">{t('messages.send')}</span>
             </Button>
           </InputGroup>

@@ -7,15 +7,15 @@ import {
   Modal,
   Form,
 } from 'react-bootstrap';
-import { selectors as channelSelectors } from '../../store/channelSlice.js';
-import { selectToken } from '../../store/authSlice.js';
-import { setClose } from '../../store/modalSlice.js';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import leoProfanity from 'leo-profanity';
+import { selectors as channelSelectors } from '../../store/channelSlice.js';
+import { selectToken } from '../../store/authSlice.js';
+import { setClose } from '../../store/modalSlice.js';
 import API_ROUTES from '../../routes/routes.js';
 
 const RenameChannel = () => {
@@ -112,18 +112,18 @@ const RenameChannel = () => {
               <Form.Label hidden htmlFor="name">{t('modal.renameChannel.body')}</Form.Label>
               <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
             </Form.Group>
-            <Container className='d-flex justify-content-end p-0'>
-              <Button type='button' variant="secondary" className='me-2' onClick={handleModalClose} disabled={formik.isSubmitting}>
+            <Container className="d-flex justify-content-end p-0">
+              <Button type="button" variant="secondary" className="me-2" onClick={handleModalClose} disabled={formik.isSubmitting}>
                 {t('modal.renameChannel.cancelBtn')}
               </Button>
-              <Button type='submit' variant="primary" onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
+              <Button type="submit" variant="primary" onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
                 {formik.isSubmitting && (
                   <Spinner
                     as="span"
                     animation="grow"
                     size="sm"
                     role="status"
-                    aria-hidden='true'
+                    aria-hidden="true"
                     className="me-1"
                   />
                 )}

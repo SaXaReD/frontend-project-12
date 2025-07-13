@@ -1,6 +1,21 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Container,
+  Col,
+  Button,
+  Image,
+  Spinner,
+  ListGroup,
+} from 'react-bootstrap';
+import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import { selectToken } from '../store/authSlice.js';
 import {
   addChannels,
@@ -8,21 +23,11 @@ import {
   setCurrentChannel,
   removeChannel,
   updateChannelName,
-  selectors as channelSelectors
+  selectors as channelSelectors,
 } from '../store/channelSlice.js';
 import { removeMessagesByChannelId } from '../store/messageSlice.js';
 import { setOpen } from '../store/modalSlice.js';
 import ChannelDropdown from './ChannelDropdown.jsx';
-import {
-  Container,
-  Col,
-  Button,
-  Image,
-  Spinner,
-  ListGroup
-} from 'react-bootstrap';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
 import socket from '../socket.js';
 import API_ROUTES from '../routes/routes.js';
 
@@ -75,7 +80,7 @@ const Channels = () => {
     dispatch(removeChannel({ id: removedChannelId }));
     dispatch(removeMessagesByChannelId(removedChannelId));
     if (currentChannelId === removedChannelId) {
-      const nextChannel = channels.find(channel => channel.id !== removedChannelId);
+      const nextChannel = channels.find((channel) => channel.id !== removedChannelId);
       if (nextChannel) {
         dispatch(setCurrentChannel(nextChannel.id));
       }
@@ -106,31 +111,34 @@ const Channels = () => {
   }, [currentChannelId, isLoading, scrollToLastChannelItem]);
 
   return (
-    <Col md={2} className='border-end px-0 bg-light flex-column h-100 d-flex'>
-      <Container className='d-flex mt-1 justify-content-between mb-2 pe-2 p-4'>
+    <Col md={2} className="border-end px-0 bg-light flex-column h-100 d-flex">
+      <Container className="d-flex mt-1 justify-content-between mb-2 pe-2 p-4">
         <b>{t('channels.title')}</b>
-        <Button type="button" variant='none' className="p-0 btn-group-vertical" onClick={() => dispatch(setOpen({ type: 'create' }))}>
-          <Image src='/images/svg/plus.svg' />
-          <span className='visually-hidden'>+</span>
+        <Button type="button" variant="none" className="p-0 btn-group-vertical" onClick={() => dispatch(setOpen({ type: 'create' }))}>
+          <Image src="/images/svg/plus.svg" />
+          <span className="visually-hidden">+</span>
         </Button>
       </Container>
       {isLoading ? (
-        <Container className="d-flex justify-content-center align-items-center h-100" key={'loading-spinner'}>
+        <Container className="d-flex justify-content-center align-items-center h-100" key="loading-spinner">
           <Spinner animation="border" role="status">
             <span className="visually-hidden">{t('channels.loading')}</span>
           </Spinner>
         </Container>
       ) : (
-        <ListGroup className='d-flex flex-column mb-2 overflow-auto flex-nowrap h-100'>
+        <ListGroup className="d-flex flex-column mb-2 overflow-auto flex-nowrap h-100">
           {channels.map((channel) => (
-            <ListGroup.Item key={channel.id} className='p-0' ref={(el) => {
-              if (el) {
-                lastChannelItemRef.current[channel.id] = el;
-              } else {
-                lastChannelItemRef.current[channel.id] = null;
-              }
-            }
-            }>
+            <ListGroup.Item
+              key={channel.id}
+              className="p-0"
+              ref={(el) => {
+                if (el) {
+                  lastChannelItemRef.current[channel.id] = el;
+                } else {
+                  lastChannelItemRef.current[channel.id] = null;
+                }
+              }}
+            >
               {channel.removable ? (
                 <ChannelDropdown
                   channelId={channel.id}
@@ -152,6 +160,6 @@ const Channels = () => {
       )}
     </Col>
   );
-}
+};
 
 export default Channels;

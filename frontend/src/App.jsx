@@ -1,18 +1,18 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { Spinner } from 'react-bootstrap';
+import leoProfanity from 'leo-profanity';
+import Modal from './components/Modal.jsx';
+import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSlice.js';
 import MainPage from './components/MainPage.jsx';
 import NotFound from './components/NotFound.jsx';
 import LoginForm from './components/LoginForm.jsx';
 import SignUp from './components/SignUp.jsx';
 import Header from './components/Header.jsx';
-import { useEffect } from 'react';
-import { ToastContainer } from "react-toastify";
-import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSlice.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { Spinner } from 'react-bootstrap';
-import Modal from './components/Modal.jsx';
-import leoProfanity from 'leo-profanity';
 
-function App() {
+const App = () => {
   const dispatch = useDispatch();
   const isAuthChecked = useSelector(selectIsAuthChecked);
   useEffect(() => {
@@ -46,12 +46,12 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginForm />} />
-          <Route path='/signup' element={<SignUp />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </BrowserRouter>
   );
-}
+};
 
 export default App;

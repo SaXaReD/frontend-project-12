@@ -6,11 +6,11 @@ import {
   Modal,
   Container,
 } from 'react-bootstrap';
-import { selectToken } from '../../store/authSlice.js';
-import { setClose } from '../../store/modalSlice.js';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { selectToken } from '../../store/authSlice.js';
+import { setClose } from '../../store/modalSlice.js';
 import API_ROUTES from '../../routes/routes.js';
 
 const ConfirmDelete = () => {
@@ -52,18 +52,18 @@ const ConfirmDelete = () => {
       </Modal.Header>
       <Modal.Body>
         <p className="lead">{t('modal.removeChannel.body')}</p>
-        <Container className='d-flex justify-content-end'>
-          <Button type='button' variant="secondary" className='me-2' onClick={handleModal} disabled={isDeleting}>
-          {t('modal.removeChannel.cancelBtn')}
+        <Container className="d-flex justify-content-end">
+          <Button type="button" variant="secondary" className="me-2" onClick={handleModal} disabled={isDeleting}>
+            {t('modal.removeChannel.cancelBtn')}
           </Button>
-          <Button type='submit' variant="danger" onClick={handleDeleteConfirmed} disabled={isDeleting}>
+          <Button type="submit" variant="danger" onClick={handleDeleteConfirmed} disabled={isDeleting}>
             {isDeleting && (
               <Spinner
                 as="span"
                 animation="grow"
                 size="sm"
                 role="status"
-                aria-hidden='true'
+                aria-hidden="true"
                 className="me-1"
               />
             )}
@@ -72,7 +72,7 @@ const ConfirmDelete = () => {
         </Container>
       </Modal.Body>
     </Modal>
-  )
-}
+  );
+};
 
 export default ConfirmDelete;
