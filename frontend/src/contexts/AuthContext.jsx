@@ -1,8 +1,8 @@
-import { createContext, useMemo, useState, useEffect } from 'react'
+import { createContext, useMemo, useState } from 'react'
 import axios from 'axios'
 import { apiPath } from '../routes/routes.js'
 import { useDispatch } from 'react-redux'
-import { setUserData } from '../store/slices/authSlice.js'
+import { setUserData, setAuthChecked } from '../store/slices/authSlice.js'
 
 const AuthContext = createContext()
 
@@ -12,19 +12,33 @@ export const AuthProvider = ({ children }) => {
   const [authData, setAuthData] = useState(() => {
     const username = localStorage.getItem('username')
     const token = localStorage.getItem('token')
-    return username && token ? { username, token } : null
+
+    const initialData = username && token ? { username, token } : null
+
+    if (initialData) {
+      dispatch(setUserData(initialData))
+    }
+    else {
+      dispatch(setAuthChecked())
+    }
+
+    return initialData
   })
 
-  useEffect(() => {
-    if (authData) {
-      dispatch(setUserData(authData))
-    }
-  }, [authData])
+  const signUp = async (credentials) => {
+    const response = await axios.post(apiPath.signup(), credentials)
+    localStorage.setItem('username', response.data.username)
+    localStorage.setItem('token', response.data.token)
+
+    dispatch(setUserData(response.data))
+    setAuthData(response.data)
+  }
 
   const logIn = async (credentials) => {
     const response = await axios.post(apiPath.login(), credentials)
     localStorage.setItem('username', response.data.username)
     localStorage.setItem('token', response.data.token)
+
     dispatch(setUserData(response.data))
     setAuthData(response.data)
   }
@@ -36,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     setAuthData(null)
   }
 
-  const value = useMemo(() => ({ authData, logIn, logOut }), [authData])
+  const value = useMemo(() => ({ authData, signUp, logIn, logOut }), [authData])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

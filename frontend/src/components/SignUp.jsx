@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
 import {
   Button,
@@ -9,20 +8,19 @@ import {
   Container,
   Spinner,
 } from 'react-bootstrap'
-import axios from 'axios'
 import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import leoProfanity from 'leo-profanity'
-import { setUserData } from '../store/slices/authSlice'
-import { apiPath } from '../routes/routes'
+import { routes } from '../routes/routes'
+import useAuth from '../hooks/useAuth.js'
 
 const SignUp = () => {
   const usernameRef = useRef()
   const redir = useNavigate()
-  const dispatch = useDispatch()
   const { t } = useTranslation()
   const notifyError = () => toast.error(t('toast.error.network'))
+  const { signUp } = useAuth()
 
   useEffect(() => {
     usernameRef.current.focus()
@@ -63,15 +61,11 @@ const SignUp = () => {
       }
 
       try {
-        const response = await axios.post(apiPath.signup(), {
+        await signUp({
           username: filteredUsername.trim(),
           password: values.password,
         })
-
-        if (response.status === 201) {
-          dispatch(setUserData(response.data))
-          redir('/')
-        }
+        redir(routes.main)
       }
       catch (error) {
         if (error.response?.status === 409) {
