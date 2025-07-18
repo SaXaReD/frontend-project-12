@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import {
   Button,
@@ -9,20 +8,18 @@ import {
   Container,
   Spinner,
 } from 'react-bootstrap'
-import axios from 'axios'
 import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { setUserData } from '../store/authSlice'
-import API_ROUTES from '../routes/routes'
+import useAuth from '../hooks/useAuth.js'
+import { routes } from '../routes/routes.js'
 
 const LoginForm = () => {
   const inputRef = useRef()
+  const redir = useNavigate()
   const { t } = useTranslation()
   const notifyError = () => toast.error(t('toast.error.network'))
-
-  const dispatch = useDispatch()
-  const redir = useNavigate()
+  const { logIn } = useAuth()
 
   useEffect(() => {
     inputRef.current.focus()
@@ -47,15 +44,8 @@ const LoginForm = () => {
       }
       try {
         setSubmitting(true)
-        const response = await axios.post(API_ROUTES.login(), values)
-
-        if (response.status === 200) {
-          const { username, token } = response.data
-          localStorage.setItem('username', username)
-          localStorage.setItem('token', token)
-          dispatch(setUserData(response.data))
-          redir('/')
-        }
+        await logIn(values)
+        redir(routes.main)
       }
       catch (error) {
         if (error.response?.status === 401) {
@@ -74,7 +64,7 @@ const LoginForm = () => {
   })
 
   return (
-    <Container className="h-100 align-content-center">
+    <Container className="vh-100 vw-100 align-content-center">
       <Card className="bg-body-secondary text-center mx-auto" style={{ width: '20.75rem' }}>
         <Card.Body>
           <Form onSubmit={formik.handleSubmit}>

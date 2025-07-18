@@ -14,8 +14,8 @@ import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import leoProfanity from 'leo-profanity'
-import { setUserData } from '../store/authSlice'
-import API_ROUTES from '../routes/routes'
+import { setUserData } from '../store/slices/authSlice'
+import { apiPath } from '../routes/routes'
 
 const SignUp = () => {
   const usernameRef = useRef()
@@ -63,7 +63,7 @@ const SignUp = () => {
       }
 
       try {
-        const response = await axios.post(API_ROUTES.signup(), {
+        const response = await axios.post(apiPath.signup(), {
           username: filteredUsername.trim(),
           password: values.password,
         })

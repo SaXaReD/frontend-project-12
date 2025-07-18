@@ -1,10 +1,8 @@
 export default {
   translation: {
-    messageCounter: {
-      one_message: '{{ count }} сообщение',
-      few_messages: '{{ count }} сообщения',
-      many_messages: '{{ count }} сообщений',
-    },
+    messageCounter_one: '{{ count }} сообщение',
+    messageCounter_few: '{{ count }} сообщения',
+    messageCounter_many: '{{ count }} сообщений',
     login: {
       error: {
         invalidCredentials: 'Неверные имя пользователя или пароль',

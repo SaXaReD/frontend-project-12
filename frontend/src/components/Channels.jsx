@@ -1,125 +1,51 @@
-import { useNavigate } from 'react-router-dom'
 import {
   useEffect,
-  useRef,
-  useState,
-  useCallback,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Container,
   Col,
   Button,
-  Image,
   Spinner,
   ListGroup,
 } from 'react-bootstrap'
-import axios from 'axios'
 import { useTranslation } from 'react-i18next'
-import { selectToken } from '../store/authSlice.js'
-import {
-  addChannels,
-  addChannel,
-  setCurrentChannel,
-  removeChannel,
-  updateChannelName,
-  selectors as channelSelectors,
-} from '../store/channelSlice.js'
-import { removeMessagesByChannelId } from '../store/messageSlice.js'
-import { setOpen } from '../store/modalSlice.js'
+import { setCurrentChannel, selectActiveChannelId } from '../store/slices/activeChannelSlice.js'
+import { setOpen } from '../store/slices/modalSlice.js'
 import ChannelDropdown from './ChannelDropdown.jsx'
-import socket from '../socket.js'
-import API_ROUTES from '../routes/routes.js'
+import { useGetChannelsQuery } from '../store/services/chatApi'
 
 const Channels = () => {
   const dispatch = useDispatch()
-  const redir = useNavigate()
-  const [isLoading, setIsLoading] = useState(true)
   const { t } = useTranslation()
+  const token = useSelector(state => state.auth.token)
 
-  const channels = useSelector(channelSelectors.selectAll)
-  const currentChannelId = useSelector(state => state.channels.currentChannel.id)
-  const token = useSelector(selectToken)
+  const { data: channels = [], isLoading: channelsLoading } = useGetChannelsQuery(undefined, { skip: !token })
 
-  const lastChannelItemRef = useRef({})
-
-  const scrollToLastChannelItem = useCallback((id) => {
-    const element = lastChannelItemRef.current[id]
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-    }
-  }, [])
+  const currentChannelId = useSelector(selectActiveChannelId)
 
   useEffect(() => {
-    setIsLoading(true)
-    axios.get(API_ROUTES.channels.list(), {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((response) => {
-      dispatch(setCurrentChannel(response.data[0].id))
-      dispatch(addChannels(response.data))
-      setIsLoading(false)
-    }).catch((error) => {
-      setIsLoading(false)
-      if (error.response?.status === 401) {
-        redir('/login')
-      }
-    })
-  }, [token, dispatch, redir, t])
-
-  const handleNewChannel = useCallback((payload) => {
-    dispatch(addChannel(payload))
-    setTimeout(() => {
-      scrollToLastChannelItem()
-    }, 0)
-  }, [dispatch, scrollToLastChannelItem])
-
-  const handleRemoveChannel = useCallback((payload) => {
-    const { id: removedChannelId } = payload
-    dispatch(removeChannel({ id: removedChannelId }))
-    dispatch(removeMessagesByChannelId(removedChannelId))
-    if (currentChannelId === removedChannelId) {
-      const nextChannel = channels.find(channel => channel.id !== removedChannelId)
-      if (nextChannel) {
-        dispatch(setCurrentChannel(nextChannel.id))
+    if (!channelsLoading && channels.length > 0) {
+      const currentChannelExists = channels.some(channel => channel.id === currentChannelId)
+      if (!currentChannelId || !currentChannelExists) {
+        dispatch(setCurrentChannel(channels[0].id))
       }
     }
-  }, [dispatch, channels, currentChannelId])
-
-  const handleRenameChannel = useCallback((payload) => {
-    const { id, name } = payload
-    dispatch(updateChannelName({ id, name }))
-  }, [dispatch])
-
-  useEffect(() => {
-    socket.on('newChannel', handleNewChannel)
-    socket.on('removeChannel', handleRemoveChannel)
-    socket.on('renameChannel', handleRenameChannel)
-
-    return () => {
-      socket.off('newChannel', handleNewChannel)
-      socket.off('removeChannel', handleRemoveChannel)
-      socket.off('renameChannel', handleRenameChannel)
-    }
-  }, [handleNewChannel, handleRemoveChannel, handleRenameChannel])
-
-  useEffect(() => {
-    if (!isLoading && currentChannelId) {
-      scrollToLastChannelItem(currentChannelId)
-    }
-  }, [currentChannelId, isLoading, scrollToLastChannelItem])
+  }, [channels, channelsLoading, currentChannelId, dispatch])
 
   return (
     <Col md={2} className="border-end px-0 bg-light flex-column h-100 d-flex">
       <Container className="d-flex mt-1 justify-content-between mb-2 pe-2 p-4">
         <b>{t('channels.title')}</b>
         <Button type="button" variant="none" className="p-0 btn-group-vertical" onClick={() => dispatch(setOpen({ type: 'create' }))}>
-          <Image src="/images/svg/plus.svg" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-square" viewBox="0 0 16 16">
+            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+          </svg>
           <span className="visually-hidden">+</span>
         </Button>
       </Container>
-      {isLoading
+      {channelsLoading
         ? (
             <Container className="d-flex justify-content-center align-items-center h-100" key="loading-spinner">
               <Spinner animation="border" role="status">
@@ -133,14 +59,6 @@ const Channels = () => {
                 <ListGroup.Item
                   key={channel.id}
                   className="p-0"
-                  ref={(el) => {
-                    if (el) {
-                      lastChannelItemRef.current[channel.id] = el
-                    }
-                    else {
-                      lastChannelItemRef.current[channel.id] = null
-                    }
-                  }}
                 >
                   {channel.removable
                     ? (

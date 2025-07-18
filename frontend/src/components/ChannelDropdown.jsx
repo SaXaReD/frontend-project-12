@@ -2,8 +2,8 @@ import { forwardRef } from 'react'
 import { Dropdown, ButtonGroup, Button } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { setOpen } from '../store/modalSlice.js'
-import { setCurrentChannel } from '../store/channelSlice.js'
+import { setOpen } from '../store/slices/modalSlice.js'
+import { setCurrentChannel } from '../store/slices/activeChannelSlice.js'
 
 const ChannelDropdown = forwardRef(({ channelId, channelName, isActive }, ref) => {
   const dispatch = useDispatch()

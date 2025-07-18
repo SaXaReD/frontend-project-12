@@ -9,14 +9,11 @@ import {
 } from 'react-bootstrap'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
-import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import leoProfanity from 'leo-profanity'
-import { selectors as channelSelectors } from '../../store/channelSlice.js'
-import { selectToken } from '../../store/authSlice.js'
-import { setClose } from '../../store/modalSlice.js'
-import API_ROUTES from '../../routes/routes.js'
+import { setClose } from '../../store/slices/modalSlice.js'
+import { useEditChannelMutation, useGetChannelsQuery } from '../../store/services/chatApi' // Добавил useGetChannelsQuery
 
 const RenameChannel = () => {
   const dispatch = useDispatch()
@@ -25,13 +22,15 @@ const RenameChannel = () => {
   const notifySuccess = () => toast.success(t('toast.success.channelRenamed'))
   const notifyError = () => toast.error(t('toast.error.network'))
 
-  const channels = useSelector(channelSelectors.selectAll)
-  const token = useSelector(selectToken)
+  const { data: channels = [] } = useGetChannelsQuery()
+
   const { type, ChannelId } = useSelector(state => state.modal)
 
   const channelToRename = channels.find(c => c.id === ChannelId)
-  const existingNames = channels.map(c => c.name)
+  const existingNames = channels.map(c => c.name).filter(name => name !== channelToRename?.name)
   const initialChannelName = channelToRename ? channelToRename.name : ''
+
+  const [editChannel, { isLoading: isRenamingChannel }] = useEditChannelMutation()
 
   const validationSchema = yup.object().shape({
     name: yup
@@ -49,23 +48,11 @@ const RenameChannel = () => {
     },
     validationSchema,
     validateOnChange: false,
-    onSubmit: async (values, { setSubmitting }) => {
-      if (!token) return
-      setSubmitting(true)
-
+    onSubmit: async (values) => {
       const filteredName = leoProfanity.clean(values.name)
 
-      // if (filteredName !== values.name) {
-      //   formik.setFieldError('name', t('channels.error.profanity'))
-      //   return
-      // }
-
       try {
-        await axios.patch(API_ROUTES.channels.channelById(ChannelId), { name: filteredName }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        await editChannel({ id: ChannelId, name: filteredName }).unwrap()
         formik.resetForm()
         dispatch(setClose())
         notifySuccess()
@@ -74,11 +61,14 @@ const RenameChannel = () => {
         console.error('Error renaming channel:', error)
         notifyError()
       }
-      finally {
-        setSubmitting(false)
-      }
     },
   })
+
+  useEffect(() => {
+    if (channelToRename) {
+      formik.setFieldValue('name', channelToRename.name)
+    }
+  }, [channelToRename, formik.setFieldValue])
 
   useEffect(() => {
     if (inputRef.current) {
@@ -115,11 +105,11 @@ const RenameChannel = () => {
               <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
             </Form.Group>
             <Container className="d-flex justify-content-end p-0">
-              <Button type="button" variant="secondary" className="me-2" onClick={handleModalClose} disabled={formik.isSubmitting}>
+              <Button type="button" variant="secondary" className="me-2" onClick={handleModalClose} disabled={isRenamingChannel}>
                 {t('modal.renameChannel.cancelBtn')}
               </Button>
-              <Button type="submit" variant="primary" onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
-                {formik.isSubmitting && (
+              <Button type="submit" variant="primary" disabled={isRenamingChannel}>
+                {isRenamingChannel && (
                   <Spinner
                     as="span"
                     animation="grow"
@@ -129,7 +119,7 @@ const RenameChannel = () => {
                     className="me-1"
                   />
                 )}
-                {formik.isSubmitting ? t('modal.renameChannel.loading') : t('modal.renameChannel.confirmBtn')}
+                {isRenamingChannel ? t('modal.renameChannel.loading') : t('modal.renameChannel.confirmBtn')}
               </Button>
             </Container>
           </Form>

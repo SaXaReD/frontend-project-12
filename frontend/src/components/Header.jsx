@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { Navbar, Container, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { clearUserData, selectToken } from '../store/authSlice'
+import { clearUserData, selectToken } from '../store/slices/authSlice'
 
 const Header = () => {
   const { t } = useTranslation()
@@ -21,7 +21,7 @@ const Header = () => {
   }
 
   return (
-    <Navbar className="py-3 bg-gradient shadow" bg="primary" data-bs-theme="dark">
+    <Navbar className="py-3 bg-gradient shadow vw-100" bg="primary" data-bs-theme="dark">
       <Container className="d-flex align-items-center justify-content-between">
         <Button
           onClick={handleLogoClick}

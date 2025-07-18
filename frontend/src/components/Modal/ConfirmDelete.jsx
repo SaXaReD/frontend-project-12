@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Button,
@@ -6,40 +5,42 @@ import {
   Modal,
   Container,
 } from 'react-bootstrap'
-import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { selectToken } from '../../store/authSlice.js'
-import { setClose } from '../../store/modalSlice.js'
-import API_ROUTES from '../../routes/routes.js'
+import { setClose } from '../../store/slices/modalSlice.js'
+import { useRemoveChannelMutation, useRemoveMessageMutation, useGetMessagesQuery } from '../../store/services/chatApi'
 
 const ConfirmDelete = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const [isDeleting, setIsDeleting] = useState(false)
   const notifySuccess = () => toast.success(t('toast.success.channelRemoved'))
   const notifyError = () => toast.error(t('toast.error.network'))
 
-  const token = useSelector(selectToken)
   const { type, ChannelId } = useSelector(state => state.modal)
 
+  const [removeChannel, { isLoading: isDeleting }] = useRemoveChannelMutation()
+  const [removeMessage] = useRemoveMessageMutation()
+
+  const { data: allMessages = [] } = useGetMessagesQuery()
+
   const handleDeleteConfirmed = async () => {
-    setIsDeleting(true)
     try {
-      await axios.delete(API_ROUTES.channels.channelById(ChannelId), {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await removeChannel({ id: ChannelId })
+      const messagesToDeleteIds = allMessages
+        .filter(message => message.channelId === ChannelId)
+        .map(message => message.id)
+      if (messagesToDeleteIds.length > 0) {
+        await Promise.allSettled(
+          messagesToDeleteIds.map(id => removeMessage({ id }).unwrap(),
+          ),
+        )
+      }
       dispatch(setClose())
       notifySuccess()
     }
     catch (error) {
       console.error('Error deleting channel:', error)
       notifyError()
-    }
-    finally {
-      setIsDeleting(false)
     }
   }
 

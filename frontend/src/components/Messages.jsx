@@ -1,67 +1,55 @@
-import { useNavigate } from 'react-router-dom'
 import {
   useEffect,
   useRef,
   useState,
-  useCallback,
   useMemo,
 } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import {
   Container,
   Col,
   Form,
   Button,
-  Image,
   InputGroup,
   Spinner,
 } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-import axios from 'axios'
-import { toast } from 'react-toastify'
 import leoProfanity from 'leo-profanity'
-import API_ROUTES from '../routes/routes.js'
-import {
-  setInitialMessages,
-  getMessagesForChannel,
-  addOneMessage,
-} from '../store/messageSlice.js'
-import { selectors as channelSelectors } from '../store/channelSlice.js'
-import { selectToken, selectUsername } from '../store/authSlice'
-import socket from '../socket.js'
+import { selectUsername } from '../store/slices/authSlice.js'
+import { useGetMessagesQuery, useAddMessageMutation, useGetChannelsQuery } from '../store/services/chatApi'
+import { selectActiveChannelId } from '../store/slices/activeChannelSlice.js'
 
 const Messages = () => {
-  const redir = useNavigate()
-  const dispatch = useDispatch()
   const { t } = useTranslation()
   const messagesBoxRef = useRef(null)
   const messageFocusRef = useRef(null)
   const [messageText, setMessageText] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-  const notifyError = () => toast.error(t('toast.error.network'))
+  const token = useSelector(state => state.auth.token)
 
-  const currentChannelId = useSelector(state => state.channels.currentChannel.id)
-  const allChannels = useSelector(channelSelectors.selectAll)
-  const currentChannel = allChannels.find(c => c.id === currentChannelId)
+  const {
+    data: allMessages,
+    isLoading: messagesLoading,
+  } = useGetMessagesQuery(undefined, { skip: !token })
 
-  const currentMessages = useSelector(state => getMessagesForChannel(state, currentChannelId))
+  const { data: allChannels = [] } = useGetChannelsQuery()
 
-  const messagesCount = useMemo(() => {
-    const count = currentMessages.length
-    const getEndOfMessage = (n) => {
-      const lastTwo = n % 100
-      const lastOne = n % 10
+  const [addMessage, { isLoading: isSendingMessage }] = useAddMessageMutation()
 
-      if (lastTwo >= 11 && lastTwo <= 14) return 'many_messages'
-      if (lastOne === 1) return 'one_message'
-      if (lastOne >= 2 && lastOne <= 4) return 'few_messages'
-      return 'many_messages'
-    }
-    return t(`messageCounter.${getEndOfMessage(count)}`, { count })
-  }, [currentMessages, t])
+  const currentChannelId = useSelector(selectActiveChannelId)
+
+  const currentChannel = useMemo(() => (
+    allChannels.find(c => c.id === currentChannelId)
+  ), [allChannels, currentChannelId])
+
+  const currentMessages = useMemo(() => {
+    if (!allMessages) return []
+    return allMessages.filter(message => message.channelId === currentChannelId)
+  }, [allMessages, currentChannelId])
+
+  const count = currentMessages.length
+  const messagesCountText = t('messageCounter', { count })
 
   const username = useSelector(selectUsername)
-  const token = useSelector(selectToken)
 
   useEffect(() => {
     if (messagesBoxRef.current) {
@@ -75,37 +63,6 @@ const Messages = () => {
     }
   }, [currentChannelId])
 
-  useEffect(() => {
-    setIsLoading(true)
-    axios.get(API_ROUTES.messages.list(), {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        dispatch(setInitialMessages(response.data))
-        setIsLoading(false)
-      })
-      .catch((error) => {
-        setIsLoading(false)
-        if (error.response.status === 401) {
-          redir('/login')
-        }
-      })
-  }, [token, dispatch, redir, t])
-
-  const handleNewMessage = useCallback((payload) => {
-    dispatch(addOneMessage(payload))
-  }, [dispatch])
-
-  useEffect(() => {
-    socket.on('newMessage', handleNewMessage)
-
-    return () => {
-      socket.off('newMessage', handleNewMessage)
-    }
-  }, [handleNewMessage])
-
   const handleSendMessage = async (e) => {
     e.preventDefault()
 
@@ -116,26 +73,19 @@ const Messages = () => {
 
     const filteredName = leoProfanity.clean(trimmedMessage)
 
-    // if (filteredName !== trimmedMessage) {
-    //   toast.error(t('messages.error.profanity'))
-    //   return
-    // }
-
     const newMessageData = {
       body: filteredName,
       channelId: currentChannelId,
       username,
     }
 
-    axios.post(API_ROUTES.messages.list(), newMessageData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(() => setMessageText(''))
-      .catch(() => {
-        notifyError()
-      })
+    try {
+      await addMessage(newMessageData).unwrap()
+      setMessageText('')
+    }
+    catch (error) {
+      console.error('Failed to send message:', error)
+    }
   }
 
   return (
@@ -145,9 +95,9 @@ const Messages = () => {
           <span># </span>
           <b>{currentChannel ? currentChannel.name : t('channelName')}</b>
         </p>
-        <span className="text-muted">{messagesCount}</span>
+        <span className="text-muted">{t(messagesCountText)}</span>
       </Container>
-      {isLoading
+      {messagesLoading
         ? (
             <Container className="d-flex justify-content-center align-items-center h-100">
               <Spinner animation="border" role="status">
@@ -182,8 +132,15 @@ const Messages = () => {
               aria-label={t('messages.label')}
               onChange={e => setMessageText(e.target.value)}
             />
-            <Button variant="none" type="submit" className="btn-group-vertical" disabled={!messageText.trim()}>
-              <Image src="/images/svg/send.svg" />
+            <Button
+              variant="none"
+              type="submit"
+              className="btn-group-vertical"
+              disabled={!messageText.trim() || isSendingMessage}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-arrow-right-square" viewBox="0 0 16 16">
+                <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z" />
+              </svg>
               <span className="visually-hidden">{t('messages.send')}</span>
             </Button>
           </InputGroup>

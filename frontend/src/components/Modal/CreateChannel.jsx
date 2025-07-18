@@ -9,18 +9,12 @@ import {
 } from 'react-bootstrap'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
-import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import leoProfanity from 'leo-profanity'
-import {
-  addChannel,
-  setCurrentChannel,
-  selectors as channelSelectors,
-} from '../../store/channelSlice.js'
-import { selectToken } from '../../store/authSlice.js'
-import { setClose } from '../../store/modalSlice.js'
-import API_ROUTES from '../../routes/routes.js'
+import { setCurrentChannel } from '../../store/slices/activeChannelSlice.js'
+import { setClose } from '../../store/slices/modalSlice.js'
+import { useAddChannelMutation, useGetChannelsQuery } from '../../store/services/chatApi'
 
 const CreateChannel = () => {
   const dispatch = useDispatch()
@@ -29,10 +23,12 @@ const CreateChannel = () => {
   const notifySuccess = () => toast.success(t('toast.success.channelCreated'))
   const notifyError = () => toast.error(t('toast.error.network'))
 
-  const channels = useSelector(channelSelectors.selectAll)
-  const token = useSelector(selectToken)
-  const existingNames = Object.values(channels).map(el => el.name)
+  const { data: channels = [] } = useGetChannelsQuery()
+
+  const existingNames = channels.map(el => el.name)
   const { type } = useSelector(state => state.modal)
+
+  const [addChannel, { isLoading: isAddingChannel }] = useAddChannelMutation()
 
   const validationSchema = yup.object().shape({
     name: yup
@@ -49,25 +45,12 @@ const CreateChannel = () => {
     },
     validationSchema,
     validateOnChange: false,
-    onSubmit: async (values, { setSubmitting }) => {
-      if (!token) return
-      setSubmitting(true)
-
+    onSubmit: async (values) => {
       const filteredName = leoProfanity.clean(values.name)
 
-      // if (filteredName !== values.name) {
-      //   formik.setFieldError('name', t('channels.error.profanity'))
-      //   return
-      // }
-
       try {
-        const response = await axios.post(API_ROUTES.channels.list(), { name: filteredName }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        dispatch(addChannel(response.data))
-        dispatch(setCurrentChannel(response.data.id))
+        const response = await addChannel({ name: filteredName }).unwrap()
+        dispatch(setCurrentChannel(response.id))
         formik.resetForm()
         notifySuccess()
       }
@@ -76,7 +59,6 @@ const CreateChannel = () => {
         notifyError()
       }
       finally {
-        setSubmitting(false)
         dispatch(setClose())
       }
     },
@@ -115,12 +97,12 @@ const CreateChannel = () => {
             <Form.Label hidden htmlFor="name">{t('modal.createChannel.body')}</Form.Label>
             <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
             <Container className="d-flex justify-content-end p-0">
-              <Button type="button" variant="secondary" className="me-2" onClick={handleModal}>
+              <Button type="button" variant="secondary" className="me-2" onClick={handleModal} disabled={isAddingChannel}>
                 {t('modal.createChannel.cancelBtn')}
               </Button>
-              <Button type="submit" variant="primary" onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
-                {formik.isSubmitting && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
-                {!formik.isSubmitting ? t('modal.createChannel.confirmBtn') : t('modal.createChannel.loading')}
+              <Button type="submit" variant="primary" disabled={isAddingChannel}>
+                {isAddingChannel && <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />}
+                {!isAddingChannel ? t('modal.createChannel.confirmBtn') : t('modal.createChannel.loading')}
               </Button>
             </Container>
           </Form>

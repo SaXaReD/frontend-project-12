@@ -4,12 +4,6 @@
 [![Actions Status](https://github.com/SaXaReD/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/SaXaReD/frontend-project-12/actions)
 [![Maintainability](https://qlty.sh/gh/SaXaReD/projects/frontend-project-12/maintainability.svg)](https://qlty.sh/gh/SaXaReD/projects/frontend-project-12)
 
-###  The project represents himself as a chat, that has basic features
-* authorization
-* login / logout
-* create / remove / rename channels
-* send message
-
 ### Stack
 * React
 * React-router
@@ -18,18 +12,17 @@
 * i18n
 
 The project utilized ***React*** for the ***front-end framework***, with ***Vite*** serving as the ***build tool***.
-## For install you need to clone this repo by
-```js
+## Installation
+```bash
 git clone https://github.com/SaXaReD/frontend-project-12.git
+make install
 ```
-
-****Install dependencies**** / ****build project****
-```js
-make install // in root direcotry
+## Build for production
+```bash
 make build
+make start
 ```
-****Start backend**** / ****start frontend****
-```js
-make start-backend // in root directory for start server
-cd frontend && npm run dev
+## Development mode
+```bash
+make develop
 ```

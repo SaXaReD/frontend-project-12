@@ -14,7 +14,7 @@ start:
 	make start-backend
 
 develop:
-	make start-backend & make start-frontend
+	make start-frontend
 
 build:
 	rm -rf frontend/dist

@@ -1,56 +1,36 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { useEffect } from 'react'
 import { ToastContainer } from 'react-toastify'
-import { useDispatch, useSelector } from 'react-redux'
-import { Spinner } from 'react-bootstrap'
-import leoProfanity from 'leo-profanity'
 import Modal from './components/Modal.jsx'
-import { setUserData, selectIsAuthChecked, setAuthChecked } from './store/authSlice.js'
 import MainPage from './components/MainPage.jsx'
 import NotFound from './components/NotFound.jsx'
 import LoginForm from './components/LoginForm.jsx'
 import SignUp from './components/SignUp.jsx'
 import Header from './components/Header.jsx'
+import { Container } from 'react-bootstrap'
+import { routes } from './routes/routes.js'
+import PrivateRoute from './PrivateRoute.jsx'
 
 const App = () => {
-  const dispatch = useDispatch()
-  const isAuthChecked = useSelector(selectIsAuthChecked)
-  useEffect(() => {
-    leoProfanity.loadDictionary('en')
-    const storedToken = localStorage.getItem('token')
-    const storedUsername = localStorage.getItem('username')
-
-    if (storedToken && storedUsername) {
-      dispatch(setUserData({ token: storedToken, username: storedUsername }))
-    }
-    else {
-      dispatch(setAuthChecked())
-    }
-  }, [dispatch])
-
-  if (!isAuthChecked) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Загрузка приложения...</span>
-        </Spinner>
-      </div>
-    )
-  }
-
   return (
     <BrowserRouter>
       <Modal />
       <ToastContainer />
-      <div className="d-flex flex-column h-100">
+      <Container className="d-flex flex-column vh-100 mw-100 m-0 p-0">
         <Header />
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route
+            path={routes.main}
+            element={(
+              <PrivateRoute>
+                <MainPage />
+              </PrivateRoute>
+            )}
+          />
+          <Route path={routes.login} element={<LoginForm />} />
+          <Route path={routes.signup} element={<SignUp />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </div>
+      </Container>
     </BrowserRouter>
   )
 }
