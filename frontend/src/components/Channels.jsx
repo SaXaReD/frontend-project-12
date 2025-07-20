@@ -1,6 +1,3 @@
-import {
-  useEffect,
-} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Container,
@@ -23,15 +20,6 @@ const Channels = () => {
   const { data: channels = [], isLoading: channelsLoading } = useGetChannelsQuery(undefined, { skip: !token })
 
   const currentChannelId = useSelector(selectActiveChannelId)
-
-  useEffect(() => {
-    if (!channelsLoading && channels.length > 0) {
-      const currentChannelExists = channels.some(channel => channel.id === currentChannelId)
-      if (!currentChannelId || !currentChannelExists) {
-        dispatch(setCurrentChannel(channels[0].id))
-      }
-    }
-  }, [channels, channelsLoading, currentChannelId, dispatch])
 
   return (
     <Col md={2} className="border-end px-0 bg-light flex-column h-100 d-flex">
