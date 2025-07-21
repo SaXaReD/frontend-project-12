@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const activeChannelSlice = createSlice({
   name: 'activeChannel',
   initialState: {
-    activeChannelId: null,
+    activeChannelId: '1',
   },
   reducers: {
     setCurrentChannel: (state, { payload }) => {

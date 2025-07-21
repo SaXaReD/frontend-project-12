@@ -76,7 +76,6 @@ const LoginForm = () => {
                 placeholder={t('login.username')}
                 name="username"
                 id="username"
-                autoComplete="username"
                 ref={inputRef}
                 isInvalid={!!formik.errors.username}
               />
@@ -95,7 +94,6 @@ const LoginForm = () => {
                 placeholder={t('login.password')}
                 name="password"
                 id="password"
-                autoComplete="current-password"
                 isInvalid={!!formik.errors.password}
               />
               <Form.Control.Feedback tooltip type="invalid">

@@ -95,7 +95,6 @@ const SignUp = () => {
                 placeholder={t('signup.username')}
                 name="username"
                 id="username"
-                autoComplete="username"
                 isInvalid={!!formik.errors.username}
                 ref={usernameRef}
               />
@@ -112,7 +111,6 @@ const SignUp = () => {
                 placeholder={t('signup.password')}
                 name="password"
                 id="password"
-                autoComplete="new-password"
                 isInvalid={!!formik.errors.password}
               />
               <Form.Label htmlFor="password">{t('signup.password')}</Form.Label>
@@ -128,7 +126,6 @@ const SignUp = () => {
                 placeholder={t('signup.confirmPassword')}
                 name="confirmPassword"
                 id="confirmPassword"
-                autoComplete="new-password"
                 isInvalid={!!formik.errors.confirmPassword}
               />
               <Form.Label htmlFor="confirmPassword">{t('signup.confirmPassword')}</Form.Label>
