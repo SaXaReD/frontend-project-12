@@ -3,6 +3,7 @@ import { Navbar, Container, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { clearUserData, selectToken } from '../store/slices/authSlice'
+import { routes } from '../routes/routes.js'
 
 const Header = () => {
   const { t } = useTranslation()
@@ -12,12 +13,12 @@ const Header = () => {
   const logout = () => {
     localStorage.clear()
     dispatch(clearUserData())
-    redir('/login')
+    redir(routes.login)
   }
 
   const handleLogoClick = () => {
-    if (!token) redir('/login')
-    redir('/')
+    if (!token) redir(routes.login)
+    redir(routes.main)
   }
 
   return (
